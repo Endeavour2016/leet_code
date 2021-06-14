@@ -1,18 +1,16 @@
-/*
+/**
  * @Author: zlm 
  * @Date: 2021-02-27 20:53:57 
  * @Last Modified by: zlm
- * @Last Modified time: 2021-03-14 14:00:18
+ * @Last Modified time: 2021-06-14 21:13:37
  */
 
-// ctrl + alt + i 自动插入日期等信息
-
-#include "../head_file.h"
+#include "head_file.h"
 using namespace std;
 
 /**
  * @problem:
- * @description:
+ * @descr:
  * @method:
  */
 
@@ -20,3 +18,6 @@ int main() {
   system ("pause");
   return 0;
 }
+
+// Tips
+// ctrl + alt + i 自动插入日期信息

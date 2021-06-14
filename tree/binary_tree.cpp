@@ -15,10 +15,9 @@
 using namespace std;
 
 /**
- * 144. Binary Tree Preorder Traversal
- * Given the root of a binary tree, return the preorder traversal of its nodes' values.
+ * @problem: 144. Binary Tree Preorder Traversal
+ * @descr: Given the root of a binary tree, return the preorder traversal of its nodes' values.
  */
-
 class Solution {
 public:
   vector<int> preorderTraversal(TreeNode* root) {
@@ -65,8 +64,8 @@ private:
 };
 
 /**
- * 105. Construct Binary Tree from Preorder and Inorder Traversal
- * @description:
+ * @problem: 105. Construct Binary Tree from Preorder and Inorder Traversal
+ * @descr:
  * Given two integer arrays preorder and inorder where preorder is the preorder 
  * traversal of a binary tree and inorder is the inorder traversal of the same tree,
  * construct and return the binary tree.
@@ -77,7 +76,6 @@ private:
  * 计算左子树的preorder和inorder,递归构造左子树
  * 右子树同上
  */
-
 TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
   if (preorder.empty() || inorder.empty()) {
     return nullptr;
@@ -113,14 +111,12 @@ TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
 }
 
 /**
- * 二叉树的插入(递归)
- * 701 Insert into a Binary Search Tree(Medium)
- * @description:
+ * @problem: 701 Insert into a Binary Search Tree(Medium) 
+ * @descr: 二叉树的插入(递归)
  * You are given the root node of a binary search tree (BST) and a value 
  * to insert into the tree. Return the root node of the BST after the insertion.
  * It is guaranteed that the new value does not exist in the original BST.
  */ 
-
 TreeNode* insertIntoBST(TreeNode* root, int val) {
   TreeNode* node;
   if (nullptr == root) {
@@ -135,6 +131,43 @@ TreeNode* insertIntoBST(TreeNode* root, int val) {
   }
   return root;
 }
+
+/**
+ * @problem: 二叉树的中序遍历
+ * @descr:
+ * @method: 迭代
+ */
+void InOrderByIterator(TreeNode *root) {
+  if (root == nullptr) {
+    return;
+  }
+
+  stack<TreeNode*> st;
+  TreeNode* p = root;
+  while (p != nullptr || !st.empty()) {
+    if (p != nullptr) {
+      st.push(p);
+      p = p->left;
+    } else {
+      p = st.top();
+      st.pop();
+      cout << p->val << " ";
+      p = p->right;
+    }
+  }
+}
+
+/**
+ * @problem: 108 前序遍历构造二叉搜索树
+ * @descr: Construct Binary Search Tree from Preorder Traversal
+ * @method:
+ */
+class Solution {
+public:
+  TreeNode* bstFromPreorder(vector<int>& preorder) {
+
+  }
+};
 
 // ====================================================================
 int main() {

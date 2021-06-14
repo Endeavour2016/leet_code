@@ -5,8 +5,8 @@
  * @Last Modified time: 2021-02-27 10:53:01
  */
 
-// leetcode top 100, 部分题目来自剑指offer及牛客面经
-
+// leetcode top liked 100
+// 部分题目来自剑指offer及牛客面经
 #include <iostream>
 #include <cmath>
 #include <string>
