@@ -112,7 +112,8 @@ TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
 
 /**
  * @problem: 701 Insert into a Binary Search Tree(Medium) 
- * @descr: 二叉树的插入(递归)
+ * @descr: 二叉树的插入
+ * @method: 递归
  * You are given the root node of a binary search tree (BST) and a value 
  * to insert into the tree. Return the root node of the BST after the insertion.
  * It is guaranteed that the new value does not exist in the original BST.
@@ -136,6 +137,11 @@ TreeNode* insertIntoBST(TreeNode* root, int val) {
  * @problem: 二叉树的中序遍历
  * @descr:
  * @method: 迭代
+ * 先遍历左子树，再遍历根节点，最后遍历右子树
+ * 1、从树的root开始，先找到左子树最底层的叶子节点(左子节点)
+ * 2、访问左子节点->访问当前根节点->访问右子树(这个过程跟步骤1一样)
+ * 3、为了保证访问完左子节点之后，能够找到其根节点，步骤1在遍历左子树的过程中，需要按照
+ * 遍历的顺序将左子树的根节点入栈，这样出栈时即可保证按中序来访问根节点
  */
 void InOrderByIterator(TreeNode *root) {
   if (root == nullptr) {
@@ -158,16 +164,57 @@ void InOrderByIterator(TreeNode *root) {
 }
 
 /**
- * @problem: 108 前序遍历构造二叉搜索树
- * @descr: Construct Binary Search Tree from Preorder Traversal
- * @method:
+ * @problem: 1008 Construct Binary Search Tree from Preorder Traversal 
+ * @descr: 根据前序遍历的结果构造二叉搜索树, 按照题目要求，这里的二叉树严格满足
+ * 左子树节点均小于跟节点，右子树节点均大于根节点
+ * @method: 递归、二分查找
+ * 根据【前序遍历】的定义：前序遍历的第 1 个结点一定是二叉树的根结点
+ * 除第一个节点，剩下的节点可以分为两个区间：
+ * 第 1 个子区间里所有的元素都严格小于根节点，可以递归构建成根节点的左子树
+ * 第 2 个子区间里所有的元素都严格大于根节点，可以递归构建成根节点的右子树
+ * 找到这两个子区间的分界线，可以使用二分查找
+ * @ref: 
  */
-class Solution {
-public:
-  TreeNode* bstFromPreorder(vector<int>& preorder) {
 
+// 更方便实现递归调用
+TreeNode* GenBstRecursive(const vector<int>& preorder, int left, int right) {
+  if (left > right) {
+    return nullptr;
   }
-};
+  int root_val = preorder[left];
+  TreeNode* root_node = new TreeNode(root_val);
+
+  // 找到两个区间的边界
+  int low = left + 1;
+  int high = right;
+  int mid = 0;
+  while (low < high) {
+    mid = low + (high - low) / 2;
+    if (preorder[mid] < root_val) {
+      low = mid + 1;
+    } else {
+      high = mid;  // 此处不用mid-1是为了保证low能恰好追上high，不会出现low > high的case
+    }
+  }
+  // 理论上此时 low == high，但还不确定是左子树区间的右边界还是右子树区间的左边界
+  mid = low;
+  if (mid == right && preorder[mid] < root_val) {  // 此时表明当前的roo节点没有右子树
+    root_node->left = GenBstRecursive(preorder, left+1, mid);
+    root_node->right = GenBstRecursive(preorder, mid+1, right);
+  } else {
+    root_node->left = GenBstRecursive(preorder, left+1, mid-1);
+    root_node->right = GenBstRecursive(preorder, mid, right);
+  }
+  return root_node;
+}
+
+TreeNode* bstFromPreorder(vector<int>& preorder) {
+  int len = preorder.size();
+  if (len == 0) {
+    return nullptr;
+  }
+  return GenBstRecursive(preorder, 0, len-1);
+}
 
 // ====================================================================
 int main() {
