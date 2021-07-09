@@ -6,6 +6,7 @@
  */
 
 #include "head_file.h"
+#include "data_structure.h"
 using namespace std;
 
 /**
