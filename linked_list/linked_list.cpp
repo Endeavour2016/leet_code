@@ -2,7 +2,7 @@
  * @Author: zlm 
  * @Date: 2021-07-09 23:04:48 
  * @Last Modified by: zlm
- * @Last Modified time: 2021-07-09 23:08:41
+ * @Last Modified time: 2021-07-10 13:44:48
  */
 
 #include "../head_file.h"
@@ -11,7 +11,7 @@ using namespace std;
 
 /**
  * @problem: 92. Reverse Linked List II
- * @description: 给一个长度为n的单链表以及指定的位置left, right, 要求反转left-right之间的节点
+ * @descr: 给一个长度为n的单链表以及指定的位置left, right, 要求反转left-right之间的节点
  * 其中 1 <= left <= right <= n
  * @method: 反转链表
  */
