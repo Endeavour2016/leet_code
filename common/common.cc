@@ -1,6 +1,6 @@
-// 公共的方法、函数等
-#include "head_file.h"
-#include "data_structure.h"
+// 通用的方法、函数等
+#include "../head_file.h"
+#include "../data_structure.h"
 using namespace std;
 
 // 二叉树的中序遍历
@@ -23,3 +23,4 @@ void InOrderByIterator(TreeNode *root) {
     }
   }
 }
+
