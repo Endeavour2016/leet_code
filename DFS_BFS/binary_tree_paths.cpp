@@ -67,10 +67,10 @@ private:
 
 /**
  * @problem: 111. Minimum Depth of Binary Tree
- * @description:Given a binary tree, find its minimum depth.
+ * @descr: Given a binary tree, find its minimum depth.
  * The minimum depth is the number of nodes along the shortest path from 
  * the root node down to the nearest leaf node.
- * @method: 递归方式求二叉树的最小深度
+ * @method: DFS: 递归方式求二叉树的最小深度
  */
 
 int minDepth(TreeNode* root) {

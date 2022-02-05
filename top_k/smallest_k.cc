@@ -10,8 +10,8 @@
 using namespace std;
 
 /**
- * @problem: 面试题 17.14. 最小K个数
- * @descr: 设计一个算法，找出数组中最小的k个数。以任意顺序返回这k个数均可
+ * @problem: 面试题 17.14. 最小的K个数
+ * @descr: 设计一个算法，找出数组中最小的k个数，以任意顺序返回这k个数均可
  * https://leetcode-cn.com/problems/smallest-k-lcci/
  * @method: 典型解法：大顶堆
  */

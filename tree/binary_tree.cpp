@@ -5,11 +5,7 @@
  * @Last Modified time: 2021-02-27 23:39:59
  */
 
-#include <iostream>
-#include <climits>
-#include <vector>
-#include <stack>
-#include <string>
+#include "../head_file.h"
 #include "../data_structure.h"
 
 using namespace std;
@@ -173,7 +169,6 @@ void InOrderByIterator(TreeNode *root) {
  * 第 1 个子区间里所有的元素都严格小于根节点，可以递归构建成根节点的左子树
  * 第 2 个子区间里所有的元素都严格大于根节点，可以递归构建成根节点的右子树
  * 找到这两个子区间的分界线，可以使用二分查找
- * @ref: 
  */
 
 // 更方便实现递归调用
@@ -208,13 +203,57 @@ TreeNode* GenBstRecursive(const vector<int>& preorder, int left, int right) {
   return root_node;
 }
 
-TreeNode* bstFromPreorder(vector<int>& preorder) {
+TreeNode* BstFromPreorder(vector<int>& preorder) {
   int len = preorder.size();
   if (len == 0) {
     return nullptr;
   }
   return GenBstRecursive(preorder, 0, len-1);
 }
+
+/**
+ * @problem: 102. Binary Tree Level Order Traversal
+ * @descr: 
+ * @method: BFS
+ */
+class Solution {
+public:
+  vector<vector<int> > levelOrder(TreeNode *root) {
+    vector<vector<int>> res;
+    if (root == nullptr) {
+      return res;
+    }
+
+    queue<TreeNode*> que; // 用来存放结点
+    que.push(root);
+
+    // while循环控制逐层向下遍历
+    while (!que.empty()) {
+
+      vector<int> curLevel;  // 用来存放当前层的节点
+      int len = que.size();  // 当前层的结点个数
+
+      // for循环遍历当前层
+      for (int i = 0; i < len; i++) {
+        TreeNode *tmp = que.front(); // 先取出队首元素
+        curLevel.push_back(tmp->val);
+
+        // 先把下一层的节点放到que后面
+        if (tmp->left != nullptr) {
+          que.push(tmp->left);
+        }
+        if (tmp->right != nullptr) {
+          que.push(tmp->right);
+        }
+
+        que.pop(); // 弹出队首
+      }   // 在每一个for循环后，当前层的结点全部存入到curLevel中, 此时que存放的是下一层的结点
+    
+      res.push_back(curLevel);
+    }
+    return res;
+  }
+};
 
 // ====================================================================
 int main() {
