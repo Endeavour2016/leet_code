@@ -10,7 +10,7 @@ using namespace std;
 
 /**
  * @problem: 33. Search in Rotated Sorted Array
- * @description:Given the array nums after the rotation and an integer target, 
+ * @descr:Given the array nums after the rotation and an integer target, 
  * return the index of target if it is in nums, or -1 if it is not in nums.
  * 题目大意：给定一个旋转数组（升序数组，从下标k位置开始旋转），从中查找指定的元素
  * For example, [0,1,2,4,5,6,7] might be rotated at pivot index 3 and become [4,5,6,7,0,1,2]

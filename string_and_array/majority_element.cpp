@@ -73,6 +73,44 @@ public:
     }
 };
 
+/**
+ * @problem: 169. 多数元素
+ * @descr: 给定一个大小为 n 的数组，找到其中的多数元素
+ * 多数元素是指在数组中出现次数 大于 ⌊ n/2 ⌋ 的元素
+ * 你可以假设数组是非空的，并且给定的数组总是存在多数元素
+ * @method: 
+ * 方法一：先排序，然后取中间值，但时间复杂度为O(NlogN)
+ **/
+
+// 方法二：元素逐个抵消。O(N)
+// 先选择数组中某个元素作为major element，用count记录其出现的次数
+// 遍历数组，当前元素跟major进行比较，相同则count+1,否则count-1
+// 当count==0时，将当前x作为新的major，继续遍历剩余元素，最终剩下的major即为最终的结果
+class Solution_2 {
+public:
+    int majorityElement(vector<int>& nums) {
+        int len = nums.size();
+        if (len == 0) {
+            return -1;
+        }
+        int major = nums[0];  // 先选第一个作为major
+        int cnt = 1;
+        for (int i = 1; i < len; ++i) {
+            if (cnt == 0) {  // 此前的major已经被抵消
+                major = nums[i];
+                cnt = 1;
+            } else {
+                if (major == nums[i]) {
+                    ++cnt;
+                } else {
+                    --cnt;
+                }
+            }
+        }
+
+        return major;
+    }
+};
 
 int main() {
   Solution solution;

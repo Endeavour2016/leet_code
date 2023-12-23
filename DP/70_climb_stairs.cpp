@@ -12,16 +12,14 @@
 using namespace std;
 
 /**
- * 70. Climbing Stairs
- * @description:
- * You are climbing a staircase. It takes n steps to reach the top.
+ * @problem: 70. Climbing Stairs
+ * @descr: You are climbing a staircase. It takes n steps to reach the top.
  * Each time you can either climb 1 or 2 steps. In how many distinct ways can you climb to the top?
  * @method: 动态规划
  * 用dp[n]表示爬n阶楼梯的方案数量，每一步只能爬1阶或者两阶，所以最终的状态递推式为：
  * dp[n] = dp[n-1] + dp[n-2]
  * 时间复杂度O(n), 空间复杂度 O(n)
  **/
-
 class Solution {
 public:
   int climbStairs(int n) {
