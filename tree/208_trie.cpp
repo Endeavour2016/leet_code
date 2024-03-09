@@ -28,10 +28,14 @@ using namespace std;
  */ 
 class TrieNode {
 public:
-  TrieNode(bool flag = false) : is_word_(flag), next_{nullptr} {}
+  TrieNode(bool flag = false) : is_word_(flag) {
+    for (int idx = 0; idx < 26; idx++) {
+      next_[idx] = nullptr;
+    }
+  }
 
 public:
-  TrieNode* next_[26];  // 每个节点有26个分支，字母种类为26
+  TrieNode* next_[26];  // 每个节点有26个分支，对应英文字母有26个
   bool is_word_ = false;  // 判断root到当前节点是否形成一个单词
 };
 
@@ -49,11 +53,12 @@ public:
     // 依次确定word中每个字母的位置
     for (int i = 0; i < word.size(); i++) {
       // str[i]对应的分支不存在，则创建相应的节点
-      if (p->next_[word[i] - 'a'] == nullptr)   // ->和[]优先级相同，这里相当于(p->next_)[i]
+      if (p->next_[word[i] - 'a'] == nullptr) {  // ->和[]优先级相同，这里相当于(p->next_)[i]
         p->next_[word[i] - 'a'] = new TrieNode();
+      }
       p = p->next_[word[i] - 'a'];
     }
-    
+
     // 当前word中的字母全部插入后，从root 到 p 节点的路径上已经形成了一个单词
     p->is_word_ = true;
   }
@@ -69,7 +74,7 @@ public:
     for (int i = 0; i < len && p != nullptr; i++) { 
         p = p->next_[word[i] - 'a'];
     }
-    
+
     return p != nullptr && p->is_word_;
   }
   
