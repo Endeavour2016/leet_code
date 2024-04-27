@@ -30,34 +30,39 @@ private:
       PreOrder(root->right, nodes);
     }
   }
-  
-  // 非递归实现
-  // 为什么用栈呢？访问完root节点后要先访问左子节点，访问完之后需要能找到右子节点的指针，然后才能访问右子节点
-  // 因此需要提前存放右子节点指针，最后再取出其指针，此过程满足“先进后出”的特性
-  void PreOrderNoRecursive(TreeNode* root, vector<int>* nodes) {
+};
+
+
+// 前序遍历-非递归版本实现思路
+// 1.先把root入栈：root
+// 2.访问栈顶，即vist(root)，然后弹出栈
+// 3.root->right入栈：[right]
+// 4.root->left入栈：[right, left]
+// 重复步骤 2～4：保证每次访问根节点后，之后两次的访问顺序都是先left后right
+void PreOrderNoRecursive(TreeNode* root, vector<int>* nodes) {
     if (root == nullptr) {
-      return;
+        return;
     }
     stack<TreeNode*> st;
-    st.push(root);  // 根节点只有一个, 直接入栈
+    st.push(root); // 根节点先入栈
 
     while (!st.empty()) {
-      // 访问当前栈顶元素,访问后弹出栈
-      TreeNode* cur_root = st.top();
-      nodes->push_back(cur_root->val);
-      st.pop();
+        // 先访问root：即当前栈顶
+        TreeNode* cur_root = st.top();
+        nodes->push_back(cur_root->val);
+        st.pop();
 
-      // 先存右子节点
-      if (cur_root->right != nullptr) {
-        st.push(cur_root->right);
-      }
-      // 再存左子节点
-      if (cur_root->left != nullptr) {
-        st.push(cur_root->left);
-      }
+        // 先存右子节点
+        if (cur_root->right != nullptr) {
+            st.push(cur_root->right);
+        }
+        // 再存左子节点
+        if (cur_root->left != nullptr) {
+            st.push(cur_root->left);
+        }
     }
-  }
-};
+}
+
 
 /**
  * @problem: 105. Construct Binary Tree from Preorder and Inorder Traversal
