@@ -85,7 +85,8 @@
     "__string": "cpp",
     "chrono": "cpp",
     "compare": "cpp",
-    "concepts": "cpp"
+    "concepts": "cpp",
+    "unordered_set": "cpp"
   },
   "editor.tabSize": 2
 }
