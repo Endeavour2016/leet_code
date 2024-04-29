@@ -10,8 +10,8 @@ using namespace std;
 
 /**
  * @problem: 448. Find All Numbers Disappeared in an Array
- * @descr: 给一个长度为n的数组，其中每个元素的取值为[1~n]的整数, 求出求[1~n]中没有出现在数组中的整数
- * @method: 可以利用数组模拟n个桶(编号为1~n), 对于数组中出现的整数k,将对应编号的桶的值设置为1(
+ * @descr: 给一个长度为n的数组，其中每个元素的取值为[1~n]的整数, 求出[1~n]中没有出现在数组中的整数
+ * @method: 可以利用数组模拟n个桶(编号为1~n), 对于数组中出现的整数k, 将对应编号的桶的值设置为1(
  * 或者其它值); 最后遍历所有的桶，没有被设置过值的桶的编号即为数组中没有出现过的数
  */
 vector<int> findDisappearedNumbers(vector<int>& nums) {

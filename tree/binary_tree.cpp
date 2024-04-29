@@ -63,6 +63,120 @@ void PreOrderNoRecursive(TreeNode* root, vector<int>* nodes) {
     }
 }
 
+/*
+前序遍历过程分析
+1.root
+2.访问左子树 left0 {
+    root(left0)
+    left1 {
+        (root)left1
+        left2 {
+            root(left2)
+            nullptr
+            right3
+        }
+        right2
+    }
+    right1
+}
+
+3.访问右子树 right0
+*/
+
+// 前序遍历：实现思路二
+// 跟下面中序的写法类似，注意真正visit(node)的地方：
+// 1、先访问根节点，然后一直遍历左子节点，每遍历一个节点时直接访问该节点，但此时节点还不能丢，需要存入栈中，直到左子节点为空
+// 2、开始出栈，根据弹出的节点找到其右子树，开始遍历右子树：即重复步骤1、2
+// p = stack.top(); st.pop(); p=p->right
+
+void PreOrderNoRecursive(TreeNode* root, vector<int> &res) {
+    stack<TreeNode*> st;
+    TreeNode* p = root;
+
+    while (p != nullptr || !st.empty()) {
+        while (p != nullptr) {
+            res.push_back(p->val);  // 1.先访问根节点【visit】
+            st.push(p);
+            p = p->left;            // 2.下一次循环时访问的是左子节点
+        }
+        // 3.开始出栈，取出右子节点，这样进入到下一次循环时开始访问右子树
+        if (!st.empty()) {
+            p = st.top();
+            st.pop();
+            p = p->right;
+        }
+    }
+}
+
+
+/**
+ * @problem: 94. Binary Tree Inorder Traversal
+ * @descr: Given the root of a binary tree, return the inorder traversal of its nodes' values.
+ */
+
+/* 中序遍历过程分析
+     root
+   /      \
+left0    right0
+
+1.left0 {
+     left1  {
+          left2  {
+              null
+              left2(root)
+              null
+          }
+          left1(root)
+          right2
+     }
+     left0(root)
+     right1
+}
+
+2.root
+
+3.right0
+
+分析思路：
+1、整体顺序是“left0->root->right0“，访问left的过程则需要一直向下找到最里层的左子节点，
+这个查找过程对应入栈顺序，直到某个左子节点的左孩子为null：left0, left1, left2
+2.从最里面的左子树开始访问（对应出栈顺序）：pop(left2)->left2的右子节点为null，不需要访问->pop(left1)
+->此时left1的右子节点right2不为空，因此需要遍历，遍历过程跟1一样，也是从right2开始一直找到其最内层的左子树
+
+由于当left0访问结束后，需要访问root节点，因此root节点的入栈顺序是在left0之前。
+
+对应的中序遍历代码实现逻辑总结如下
+1、从当前root节点开始遍历，先把当前节点入栈
+2、如果左子节点不为空，则一直往下遍历左子节点，保存在栈中，直到最后一层左子节点（该节点的左子树为空）
+3、弹出当前栈中的节点，并打印该节点（即访问该节点）
+4、如果该节点的右子树不为空，开始访问右子树，即重复上述1、2、3，将该节点的
+左子树逐层存入栈中，然后再出栈访问。
+
+当栈为空时，所有元素均访问完成
+*/
+
+void inorderNoRecursive(TreeNode* root, vector<int>& res) {
+    stack<TreeNode*> st;
+    TreeNode* p = root;
+    while (p != nullptr || !st.empty()) {
+        // 一直向下遍历左子树，并将每个左子树的root节点存入栈中
+        while (p != nullptr) {
+            // res.push_back(p->val);  // 前序遍历时，在这个位置开始访问节点
+            st.push(p);
+            p = p->left;
+        } // 直到左子树节点为null
+
+        if (!st.empty()) {
+            p = st.top();
+            st.pop();
+            res.push_back(p->val); // 访问节点，先访问的必然是左子节点【visit】
+
+            // p指向右子树：在下次循环时会执行代码{173-176}，
+            // 即把右子树中的左子树逐层的入栈，然后通过出栈的方式访问
+            p = p->right;
+        }
+    }
+}
 
 /**
  * @problem: 105. Construct Binary Tree from Preorder and Inorder Traversal
