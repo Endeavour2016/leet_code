@@ -28,7 +28,8 @@ int lengthOfLongestSubstring(string s) {
     char ch = s[end];
     if (char_2_index.find(ch) != char_2_index.end()) {
       // 当前已扫描的连续子串为[start, end-1]
-      // 其中跟ch重复的字符的位置记为x，则下一个连续的子串应该从x之后开始计算
+      // 其中跟ch重复的字符的位置记为x，则下一个连续的子串应该从x之后开始计算 : ex [start ... x ... end-1 end]
+      // 或者 [x ... start ... end-1 end]
       // 因为x之前到end-1位置的子串已经被扫描过，其中连续子串的长度已经记录并更新了max_length
       // 这里取max是因为重复的字符有可能在start之前，但是之前的字符已经被扫描过
       start = std::max(char_2_index[ch] + 1, start);
