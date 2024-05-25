@@ -15,10 +15,61 @@ using namespace std;
  * Notice that the solution set must not contain duplicate triplets.
  * 给一个数组，从中找到三个数，三数之和为0。要求返回所有的三元组，且之间不重复。
  * 比如[0,1,-1]和[0, -1, 1]算作重复
- * @method: 三重循环+双指针法减少遍历次数
- * @时间复杂度：排序的O(nlogn) + 遍历O(N^2)
+ * @flag: 双指针左右夹逼，two sum
  */
 
+
+// method1: 先确定第一个数a，剩下两个数按照two sum解法进行（左右夹逼）；
+// 由于三元组之间的数字不能重复，因此先对数组排序，保证相同的数字相邻，方便遍历过程中去重
+// 时间复杂度：O(nlogn + O(n^2))
+vector<vector<int>> threeSum(vector<int>& nums) {
+    vector<vector<int>> res;
+    if (nums.size() <= 2) {
+        return res;
+    }
+
+    int n = nums.size();
+    // 1、先排序
+    std::sort(nums.begin(), nums.end());
+
+    // 2、for循环先确定三元组中的第一个数
+    for (int i = 0; i < n - 2; i++) {
+        int target = 0 - nums[i];
+        
+        // 2sum问题，由于数组有序，可以采用for循环左右逼近
+        int left = i + 1, right = n - 1;
+        while (left < right) {
+            int sum = nums[left] + nums[right];
+            if (sum < target) {
+                left++;
+            } else if (sum > target) {
+                right--;
+            } else {
+                res.push_back(vector<int>{nums[i], nums[left], nums[right]});
+                // 跳过重复元素
+                while (left < right && nums[left] == nums[left + 1]) {
+                    ++left;
+                }
+                ++left;
+
+                while (left < right && nums[right] == nums[right - 1]) {
+                    --right;
+                }
+                --right;
+            }
+        }
+        // 本次while循环结束后，需要跳过重复元素
+        while (i < n - 2 && nums[i] == nums[i + 1]) {
+            i++;
+        }
+    }  // end for
+
+    return res;
+}
+
+
+// method2: 三重循环+双指针法减少遍历次数
+// 时间复杂度：排序的O(nlogn) + 遍历O(N^2) 
 // ex: [1, 1, 1, -2, -2, -3, 4, xxx]
 vector<vector<int>> threeSum(vector<int>& nums) {
     std::vector<std::vector<int> > res;

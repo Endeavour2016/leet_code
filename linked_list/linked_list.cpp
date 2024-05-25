@@ -2,7 +2,7 @@
  * @Author: zlm 
  * @Date: 2021-07-09 23:04:48 
  * @Last Modified by: zlm
- * @Last Modified time: 2021-07-10 13:44:48
+ * @Last Modified time: 2024-5-25 18:40
  */
 
 #include "../head_file.h"
@@ -10,8 +10,71 @@
 using namespace std;
 
 /**
- * @problem: 92. Reverse Linked List II
- * @descr: 给一个长度为n的单链表以及指定的位置left, right, 要求反转left-right之间的节点
+ * @brief: 141. Linked List Cycle
+ * 经典题目：判断链表是否有环
+ * @method: 快慢指针、双指针
+ */
+
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+
+// method1: 快慢指针法
+// 快指针一次走 2 格，慢指针一次走 1 格
+// 如果存在环，那么前一个指针一定会经过若干圈之后追上慢的指针
+// 数学分析：假设头节点到圆环入口节点的距离为d，圆环本身的周长为c
+// 当慢指针走到入口节点 p1 时，此时快指针可能已经在圆环中走了若干圈，假设此时快指针的位置为 p2
+// 两者的距离为p2-p1, 若快指针能追上慢指针，则两者的相对路程应该是deta_s = C-(p2-p1)，所消耗的时间
+// 为time_cost = deta_s / deta_speed, 只要保证能整除即可，显然当 deta_speed = 1时，快指针一定可以能追上慢指针
+
+// 若存在圆环，则快指针一定追上慢指针，此时两者相对路程为N
+
+bool hasCycle(ListNode *head) {
+    if (head == nullptr || head->next == nullptr) {
+        return false;
+    }
+    
+    ListNode* fast = head;
+    ListNode* slow = head;
+    
+    while (fast != nullptr && fast->next != nullptr) {
+        fast = fast->next->next;
+        slow = slow->next;
+        if (slow == fast) {
+            return true;
+        }
+    }
+    
+    // 如果while循环内没有执行return语句，说明链表没有环
+    return false;
+}
+
+// method2: 遍历节点，统计节点出现的次数
+bool hasCycle2(ListNode *head) {
+    if (head == nullptr || head->next == nullptr) {
+        return false;
+    }
+    
+    unordered_map<ListNode*, int> mp;
+    while (head != nullptr) {
+        mp[head]++;
+        if(mp[head] == 2) {
+            return true;
+        }
+        head = head->next;
+    }
+    // 如果while循环内没有执行return语句，说明链表没有环
+    return false;
+}
+
+/**
+ * @brief: 92. Reverse Linked List II
+ * 给一个长度为n的单链表以及指定的位置left, right, 要求反转left-right之间的节点
  * 其中 1 <= left <= right <= n
  * @method: 反转链表
  */
