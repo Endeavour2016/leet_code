@@ -28,7 +28,7 @@ public:
     priority_queue<int, vector<int>, greater<int>> que;
     for (int i = 0; i < nums.size(); i++) {
       que.push(nums[i]);
-      if (que.size() == k+1) {  // 队首始终为第k+1大的元素，故需要出队
+      if (que.size() == k+1) {   // 队首始终为第k+1大的元素，故需要出队
           que.pop();
       }
     }

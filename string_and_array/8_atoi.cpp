@@ -41,7 +41,7 @@ public:
         if (s[first_digit_index] == '-' || s[first_digit_index] == '+') {
             sign = s[first_digit_index++];
         }
-        // 4、此时first_digit_inde应该为第一个有效数字
+        // 4、此时first_digit_index 应该为第一个有效数字
         bool is_digit = IsDigit(s[first_digit_index]);
         if (!is_digit) {
             return 0;

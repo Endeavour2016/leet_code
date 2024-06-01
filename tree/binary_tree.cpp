@@ -11,6 +11,42 @@
 using namespace std;
 
 /**
+ * @brief: 124. 二叉树中的最大路径和（hard）
+ * 二叉树中的 路径 被定义为一条节点序列，序列中每对相邻节点之间都存在一条边。
+ * 同一个节点在一条路径序列中 至多出现一次。该路径 至少包含一个 节点，且不一定经过根节点。
+ * @method：递归/DFS
+ * MaxPath(node): 表示以node节点为起点的最大路径和，则 
+ * MaxPath(root) = root->val + std::max(left_max_path, right_max_path)
+ * 其中left_max_pth可以递归的调用 MaxPath 获得
+ */
+class Solution {
+public:
+    int maxPathSum(TreeNode* root) {
+        int max_path = INT_MIN;
+        MaxPath(root, &max_path);
+        return max_path;
+    }
+    int MaxPath(TreeNode* node, int* max_path) {
+        if (node == nullptr) {
+            return 0;
+        }
+        
+        // 递归计算左右子节点的最大路径
+        // 只有在最大路径大于 0 时，才会选取对应子节点
+        int left_max_path = std::max(MaxPath(node->left, max_path), 0);
+        int right_max_path = std::max(MaxPath(node->right, max_path), 0);
+
+        // 更新全局的最大路径和
+        // left->root->right 作为路径与已经计算过历史最大值做比较
+        *max_path = std::max(*max_path, node->val + left_max_path + right_max_path);
+
+        // 当前node的最大路径取决于当前节点的值与左右子节点的最大路径值
+        return node->val + max(right_max_path, left_max_path);
+    }
+};
+
+
+/**
  * @problem: 144. Binary Tree Preorder Traversal
  * @descr: Given the root of a binary tree, return the preorder traversal of its nodes' values.
  */
@@ -363,11 +399,12 @@ vector<vector<int> > levelOrder(TreeNode *root) {
         que.push(tmp->right);
       }
 
-      que.pop(); // 弹出队首
+      que.pop();  // 弹出队首
     }   // 在每一个for循环后，当前层的结点全部存入到curLevel中, 此时que存放的是下一层的结点
   
     res.push_back(curLevel);
   }
+
   return res;
 }
 
@@ -404,6 +441,7 @@ int maxDepth(TreeNode* root) {
     }
     return 1 + max(maxDepth(root->left), maxDepth(root->right));
 }
+
 
 // ====================================================================
 int main() {

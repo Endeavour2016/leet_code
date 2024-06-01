@@ -2,7 +2,7 @@
  * @Author: zlm 
  * @Date: 2021-07-09 23:04:48 
  * @Last Modified by: zlm
- * @Last Modified time: 2024-5-25 18:40
+ * @Last Modified time: 2024-5-26 14:00
  */
 
 #include "../head_file.h"
@@ -23,7 +23,6 @@ using namespace std;
  *     ListNode(int x) : val(x), next(NULL) {}
  * };
  */
-
 // method1: 快慢指针法
 // 快指针一次走 2 格，慢指针一次走 1 格
 // 如果存在环，那么前一个指针一定会经过若干圈之后追上慢的指针
@@ -33,7 +32,6 @@ using namespace std;
 // 为time_cost = deta_s / deta_speed, 只要保证能整除即可，显然当 deta_speed = 1时，快指针一定可以能追上慢指针
 
 // 若存在圆环，则快指针一定追上慢指针，此时两者相对路程为N
-
 bool hasCycle(ListNode *head) {
     if (head == nullptr || head->next == nullptr) {
         return false;
@@ -150,6 +148,44 @@ class Solution {
     return p_cur;
   }
 };
+
+/**
+ * @brief: 61. 旋转链表
+ * 给你一个链表的头节点 head ，旋转链表，将链表每个节点向右移动 k 个位置。
+ * @method: 设链表长度为len, 链表分为两部分：前 n-k 和节点和后 k 个节点 (若 k > len，取 k = k % len) 
+ * 1. 遍历一次，求出len, 由于后k个节点翻转到前面，因此最后一个结点一定与第一个结点首尾相连； 
+ * 2. 遍历前n-k个节点，断开第n-k个节点与下一个结点的连接
+ * 复杂度：时间O(n), 空间O(1)
+*/
+ListNode* rotateRight(ListNode* head, int k) {
+  if (head == nullptr || head->next == nullptr || k <= 0) {
+    return head;
+  }
+
+  // 1. 遍历求链表长度
+  int len = 0;
+  ListNode *pcur = head;
+  ListNode *pre = head;
+  while (pcur != nullptr) {
+    len++;
+    pre = pcur;
+    pcur = pcur->next;
+  }
+  // 此时pre指向尾部节点，尾部节点应该指向head
+  pre->next = head;
+
+  // 2. 遍历前 len - k%len个结点,  并断开连接
+  pcur = head; 
+  for (int i = 1; i < len - k%len; i++) {
+    pcur = pcur->next;
+  }  // pcur指向第len-k%len个结点，其下一个结点将作为旋转后的head
+
+  ListNode *newHead = pcur->next;
+  pcur->next = nullptr;  // 断开连接
+
+  return newHead;
+}
+
 
 int main() {
   system ("pause");

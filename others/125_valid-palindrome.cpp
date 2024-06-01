@@ -1,41 +1,13 @@
-/*
- * @lc app=leetcode id=125 lang=cpp
- *
- * [125] Valid Palindrome
- *
- * https://leetcode.com/problems/valid-palindrome/description/
- *
- * algorithms
- * Easy (30.87%)
- * Total Accepted:    346.1K
- * Total Submissions: 1.1M
- * Testcase Example:  '"A man, a plan, a canal: Panama"'
- *
- * Given a string, determine if it is a palindrome, considering only
- * alphanumeric characters and ignoring cases.
- * 
- * Note: For the purpose of this problem, we define empty string as valid
- * palindrome.
- * 
- * Example 1:
- * 
- * 
- * Input: "A man, a plan, a canal: Panama"
- * Output: true
- * 
- * 
- * Example 2:
- * 
- * 
- * Input: "race a car"
- * Output: false
- * 
- * 
- */
-
 #include <string>
 using namespace std;
 
+/**
+ * @brief: 125. 验证回文串
+ * Given a string, determine if it is a palindrome, considering only
+ * alphanumeric characters and ignoring cases.
+ * 如果在将所有大写字符转换为小写字符、并移除所有非字母数字字符之后，短语正着读和反着读都一样
+ * 则可以认为该短语是一个回文串
+ */
 class Solution {
 public:
     bool isPalindrome(string s) {
@@ -48,8 +20,9 @@ public:
             else if (!isLetterOrDigit(s[right]))
                 right--;
             else {
-                if (!isSame(s[left], s[right]))
+                if (!isSame(s[left], s[right])) {
                     return false;
+                }
                 left++;
                 right--;
             }
@@ -71,4 +44,25 @@ public:
             return (abs(ch1 - ch2) == 32) || (ch1 == ch2);
     }
 };
+
+// 官方解法
+bool isPalindrome2(string s) {
+    string sgood;
+    for (char ch: s) {
+        if (isalnum(ch)) {
+            sgood += tolower(ch);
+        }
+    }
+    int n = sgood.size();
+    int left = 0, right = n - 1;
+    while (left < right) {
+        if (sgood[left] != sgood[right]) {
+            return false;
+        }
+        ++left;
+        --right;
+    }
+    return true;
+}
+
 

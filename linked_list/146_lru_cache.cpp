@@ -10,8 +10,8 @@
 using namespace std;
 
 /**
- * @problem: 146. LRU Cache
- * @descr:实现 LRUCache 类：以正整数作为容量 capacity 初始化 LRU 缓存，实现get和put操作
+ * @brief: 146. LRU Cache
+ * 实现 LRUCache 类：以正整数作为容量 capacity 初始化 LRU 缓存，实现get和put操作
  * 要求在 O(1) 时间复杂度内完成这两种操作
  * @method: 双向链表+哈希表
  */
@@ -28,7 +28,7 @@ public:
             return -1;
         }
         list_iterator list_iter = mp_iter->second;
-        // 当期访问过的记录，移动到列表头部
+        // 当前访问过的记录，移动到列表头部
         data_list_.splice(data_list_.begin(), data_list_, list_iter);
         return mp_iter->second->second;
 
@@ -37,7 +37,7 @@ public:
     void put(int key, int value) {
         auto iter = key_map_.find(key);
         if (iter != key_map_.end()) {
-          list_iterator list_iter = iter->second;
+          list_iterator& list_iter = iter->second;
           // update value
           list_iter->second = value;
           // move current value to list top
@@ -51,6 +51,7 @@ public:
           }
           pair<int, int> new_record(key, value);
           data_list_.push_front(new_record);
+          // data_list_.push_front(std::make_pair(key, value));
           key_map_.insert(make_pair(key, data_list_.begin()));
         }
     }
@@ -58,7 +59,7 @@ public:
 private:
     std::list<pair<int, int>> data_list_;
     // 记录key-value映射关系，实现快速访问
-    unordered_map<int, list_iterator> key_map_;
+    std::unordered_map<int, list_iterator> key_map_;
     int capacity_ = 0;
 };
 
