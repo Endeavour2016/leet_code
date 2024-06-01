@@ -25,7 +25,6 @@ using namespace std;
 // 遍历所有的加油站，对于每个加油站，判断从此出发能否再回到该位置
 // https://leetcode.cn/problems/gas-station/solutions/25644/xiang-xi-tong-su-de-si-lu-fen-xi-duo-jie-fa-by--30/?envType=study-plan-v2&envId=top-interview-150
 
-
 int CanReturn(const vector<int>& gas, const vector<int>& cost,
               int start_pos, int station_num);
 

@@ -11,8 +11,8 @@ using namespace std;
 /**
  * @problem: 153. Find Minimum in Rotated Sorted Array
  * @descr: 求旋转数组中的最小数字.
- * For example, the array nums = [0,1,2,4,5,6,7] might become:
- * [4,5,6,7,0,1,2] if it was rotated 4 times.
+ * For example, the array nums = [0,1,2, 4,5,6,7] might become:
+ * [4,5,6,7, 0,1,2] if it was rotated 4 times.
  * [0,1,2,4,5,6,7] if it was rotated 7 times.
  * @method: 
  * 方法一：nums是一个有序数组，旋转后分为左右另个子序列，两个子序列均递增且左边的子序列均大于右边的子序列
