@@ -124,7 +124,6 @@ void PreOrderNoRecursive(TreeNode* root, vector<int>* nodes) {
 // 1、先访问根节点，然后一直遍历左子节点，每遍历一个节点时直接访问该节点，但此时节点还不能丢，需要存入栈中，直到左子节点为空
 // 2、开始出栈，根据弹出的节点找到其右子树，开始遍历右子树：即重复步骤1、2
 // p = stack.top(); st.pop(); p=p->right
-
 void PreOrderNoRecursive(TreeNode* root, vector<int> &res) {
     stack<TreeNode*> st;
     TreeNode* p = root;
@@ -135,7 +134,7 @@ void PreOrderNoRecursive(TreeNode* root, vector<int> &res) {
             st.push(p);
             p = p->left;            // 2.下一次循环时访问的是左子节点
         }
-        // 3.开始出栈，取出右子节点，这样进入到下一次循环时开始访问右子树
+        // 3.开始出栈，栈顶是某个root节点，取出右子节点 root->right，这样进入到下一次循环时开始访问右子树
         if (!st.empty()) {
             p = st.top();
             st.pop();
@@ -213,6 +212,42 @@ void inorderNoRecursive(TreeNode* root, vector<int>& res) {
         }
     }
 }
+
+/**
+ * @brief: 145. 二叉树后序遍历
+ * @method: 非递归的方式实现
+ */
+// 后序遍历的实现相对比较绕，这里从另一个角度考虑：后序的顺序为 left->right->root，这个过程的逆过程是 root->right->left
+// 类似于 “前序遍历”，可参考前序遍历的实现，用 stack存放按照“root->right->left“顺序遍历的节点
+// 然后依次从栈的尾部输出元素即可达到后序的效果
+vector<int> postorderTraversal(TreeNode* root) {
+  vector<int> res;
+  if (root == nullptr) {
+      return res;
+  }
+  stack<TreeNode *> st;
+  TreeNode* p = root;
+
+  while (p != nullptr || !st.empty()) {
+    while (p != nullptr) {
+      res.push_back(p->val);  // 1.先访问根节点
+      st.push(p);
+      p = p->right;           // 2.之后一直先访问右子树的根节点，直到右子树为null
+    }
+    // 上面的while循环一直考虑的是右子树，接下来需要考虑左子树的访问
+    if (!st.empty()) {
+      p = st.top();  // 弹出栈顶（表示某个root节点）
+      st.pop();
+      p = p->left;   // 进入下一次循环时，从p开始进行遍历
+    }  
+  }
+  
+  reverse(res.begin(), res.end());  // 此时为后序遍历结果
+  return res;
+}
+
+
+
 
 /**
  * @problem: 105. Construct Binary Tree from Preorder and Inorder Traversal
