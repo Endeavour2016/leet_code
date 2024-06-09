@@ -25,7 +25,7 @@ using namespace std;
  * @descr: 字典树的简单实现
  * @method: 每个节点有26个分支，分别表示字母 a~z, a对应的分支为next_[0], 
  * 则其余字母x的分支next_[x-'a'].
- */ 
+ */
 class TrieNode {
 public:
   TrieNode(bool flag = false) : is_word_(flag) {
@@ -46,7 +46,7 @@ private:
 public:
   /** Initialize your data structure here. */
   Trie() : root(new TrieNode()) {}
-  
+
   /** Inserts a word into the trie. */
   void insert(string word) {
     TrieNode* p = root;

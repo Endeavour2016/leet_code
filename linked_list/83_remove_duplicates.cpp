@@ -60,52 +60,6 @@ public:
  * @时间复杂度：O(n)
  * @空间复杂度：O(1)
  */
-ListNode* deleteDuplicates82(ListNode* head) {
-    if (nullptr == head || head->next == nullptr)  {
-        return head;
-    }
-    ListNode* new_head = nullptr;
-    ListNode* pre = nullptr;
-    ListNode* pcur = head;
-    ListNode* pnext = pcur->next;
-    while (pcur != nullptr && pnext != nullptr) {
-        if (pnext->val == pcur->val) {
-            // 删除后面重复的元素，直到遇到下一个不重复元素
-            while (pnext != nullptr && pnext->val == pcur->val) {
-                ListNode* temp = pnext;
-                pnext = pnext->next;
-                delete temp;
-            }
-            // 删除pcur
-            delete pcur;
-            pcur = pnext;
-            if (pnext != nullptr) {
-                pnext = pnext->next;
-            }
-            if (pre != nullptr) {
-                pre->next = pcur;
-            }
-            if (pnext == nullptr && pre == nullptr) {
-                // 说明此时已经处理了所有节点且pcur之前的节点均被删除了
-                // 此时pcur即为新的头节点
-                new_head = pcur;
-                break;
-            }
-        } else {
-            // pre pcur pnext三个指针向后扫描
-            if (pre == nullptr) {
-                // 表明此时找到了第一个不重复的节点pcur，即最终的头节点
-                new_head = pcur;
-            }
-            pre = pcur;
-            pcur = pnext;
-            pnext = pnext->next;
-        }
-    }
-    return new_head;
-}
-
-
 // 更容易理解的写法
 // 通过一个指针变量pcur遍历链表, 遍历过程中：
 //  1.如果遇到重复元素，即pcur->val == pcur->next->val：
@@ -158,6 +112,37 @@ ListNode* deleteDuplicatesUpdate(ListNode* head) {
         }
     }
     return new_head;
+}
+
+
+
+// now coder: BM16 删除有序链表中重复的元素-II
+// 1→1→1→2→3, 返回 2->3
+// 辅助表头：new_head->1-->1-->1-->2-->3
+// cur = new_head
+// 判断cur->next->val == cur->next->next->val，相同的话把cur后面所有重复元素都删除
+// cur->2-->3
+// 最终返回new_head->next即可
+ListNode* deleteDuplicates(ListNode* head) {
+    //空链表 fast-template
+    if (head == NULL)
+        return NULL;
+    ListNode* res = new ListNode(0);
+    //在链表前加一个表头
+    res->next = head;
+    ListNode* cur = res;
+    while (cur->next != NULL && cur->next->next != NULL) {
+        //遇到相邻两个结点值相同
+        if (cur->next->val == cur->next->next->val) {
+            int temp = cur->next->val;
+            //将所有相同的都跳过
+            while (cur->next != NULL && cur->next->val == temp)
+                cur->next = cur->next->next;
+        } else
+            cur = cur->next;
+    }
+    //返回时去掉表头
+    return res->next;
 }
 
 
