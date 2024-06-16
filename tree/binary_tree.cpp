@@ -2,7 +2,7 @@
  * @Author: zlm 
  * @Date: 2021-02-27 10:08:02 
  * @Last Modified by: zlm
- * @Last Modified time: 2021-02-27 23:39:59
+ * @Last Modified time: 2024-06-15 10:01
  */
 
 #include "../head_file.h"
@@ -10,11 +10,37 @@
 
 using namespace std;
 
+
+/**
+ * @brief: 112. 路径总和 (easy)
+ * 给你二叉树的根节点 root 和一个表示目标和的整数 targetSum 。判断该树中是否存在 根节点到叶子节点 的路径，
+ * 这条路径上所有节点值相加等于目标和 targetSum。如果存在，返回 true；否则，返回 false。
+ * 叶子节点 是指没有子节点的节点。
+ * @method: 递归
+ */
+// 递归求解，先判断root是否与sum相等，若相等且root为叶子结点，则返回true，否则递归的在左右字树中查找
+class Solution {
+public:
+    bool hasPathSum(TreeNode *root, int sum) {
+        if (root == nullptr)
+            return false;
+        if (root->val == sum && root->left ==nullptr && root->right == nullptr)
+            return true;
+        if (hasPathSum(root->left, sum-(root->val)) || hasPathSum(root->right, sum-(root->val)) )
+            return true;
+        else 
+            return false;
+    }
+};
+
+
+
+
 /**
  * @brief: 124. 二叉树中的最大路径和（hard）
  * 二叉树中的 路径 被定义为一条节点序列，序列中每对相邻节点之间都存在一条边。
  * 同一个节点在一条路径序列中 至多出现一次。该路径 至少包含一个 节点，且不一定经过根节点。
- * @method：递归/DFS
+ * @method: 递归/DFS
  * MaxPath(node): 表示以node节点为起点的最大路径和，则 
  * MaxPath(root) = root->val + std::max(left_max_path, right_max_path)
  * 其中left_max_pth可以递归的调用 MaxPath 获得
