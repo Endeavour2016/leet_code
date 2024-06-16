@@ -16,7 +16,8 @@ using namespace std;
  * 要求空间复杂度应为 O(1), 时间复杂度应为 O(N)
  * 输入: 1->2->3->4->5->NULL
  * 输出: 1->3->5->2->4->NULL
- * @method: 
+ * @method: 双指针
+ * 
  */
 
 class Solution {
@@ -25,28 +26,23 @@ public:
     if (head == nullptr || head->next == nullptr) {
       return head;
     }
-    ListNode* odd_ptr = head;
-    ListNode* even_head = head->next;
-    ListNode* even_ptr = even_head;
-    while (odd_ptr != nullptr && even_ptr != nullptr) {
-      if (odd_ptr->next != nullptr && odd_ptr->next->next != nullptr) {
+    ListNode* odd_ptr = head;  // 标记奇数位置节点
+    ListNode* even_ptr = head->next;   // 标记偶数位置节点
+    ListNode* even_head = even_ptr;
+
+    while (odd_ptr->next != nullptr && even_ptr->next!= nullptr) {
         // 1.先将odd节点串接起来
-        odd_ptr->next = odd_ptr->next->next;
+        odd_ptr->next = even_ptr->next;
         odd_ptr = odd_ptr->next;
 
         // 2.将even节点串接起来
-        if (even_ptr->next != nullptr && even_ptr->next->next != nullptr) {
-          even_ptr->next = even_ptr->next->next;
-          even_ptr = even_ptr->next;
-        }
-      } else {  // 执行到这里表明old_optr为最后一个奇数节点，此时even_ptr应该指向最后一个偶数节点
-        break;
-      }
+        even_ptr->next = odd_ptr->next;  // 3
+        even_ptr = even_ptr->next;       // 4
     }
 
+    // 此时odd指向最后一个奇数节点，even指向最后一个偶数节点或者为nullptr（比如总的节点数为奇数的情况）
     // 3.连接奇数节点链和偶数节点链，即奇数链最后一个节点连接偶数链第一个节点
     odd_ptr->next = even_head;
-    even_ptr->next = nullptr;
     return head;
   }
 };
