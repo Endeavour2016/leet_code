@@ -57,7 +57,7 @@ vector<vector<int>> threeSum(vector<int>& nums) {
                 --right;
             }
         }
-        // 本次while循环结束后，需要跳过重复元素
+        // 跳过重复元素: 保证下次for循环从其它元素开始
         while (i < n - 2 && nums[i] == nums[i + 1]) {
             i++;
         }

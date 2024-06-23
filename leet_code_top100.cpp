@@ -727,10 +727,8 @@ public:
 };
 
 /** 77. Combinations
-* @author: zlm
-* @date: 2018-6-26 20:50
-* @description: 组合问题：在 1,2,3,..,n-1, n 中选出由 k 个数构成的所有组合
-* @method: backtracing， DFS， 递归
+* @brief: 组合问题：在 1,2,3,..,n-1, n 中选出由 k 个数构成的所有组合
+* @method: backtracing/DFS/递归
 * 先找出1开头的组合->2开头的组合->3开头的组合...需要对n个数进行DFS，故时间复杂度为 O(n!)
 */
 class Solution77 {
@@ -749,7 +747,7 @@ public:
   }
 
   // 组合的核心函数
-  // begin：表示组合的起始元素。即求出从 begin 开始的元素
+  // begin：表示组合的起始元素。即计算出以 begin 为首的组合
   void combination(vector<vector<int>> &res, vector<int> &cur, int n, int k, int begin) {
     if (cur.size() == k) { // 回溯的终止条件：找到一种组合后函数返回
       res.push_back(cur);
@@ -761,12 +759,68 @@ public:
       cur.push_back(i);
 
       // 递归
-      combination(res, cur, n, k, i + 1); //确定了首元素 i, 然后对i之后的元素进行组合
+      combination(res, cur, n, k, i + 1);  // 确定了首元素 i, 然后对i之后的元素进行组合
           
       // 回溯后，删除当前for循环中添加的元素（line717），此时cur = [],下一次 fo r循环中将选择新的首元素
       cur.pop_back(); 
     }
   }
+};
+
+/**
+ * @brief: 39. 组合总和
+ * 给你一个 无重复元素 的整数数组 candidates 和一个目标整数 target ，
+ * 找出 candidates 中可以使数字和为目标数 target 的所有不同组合，并以列表形式返回。
+ * 你可以按 任意顺序 返回这些组合。
+ * candidates 中的 同一个 数字可以 无限制重复被选取 。
+ * 如果至少一个数字的被选数量不同，则两种组合是不同的。 
+ * @method: 回溯法、DFS
+ * 思路：采用回溯的方法求出所有的组合，计算每一种组合是否满足条件，是则返回，否则进行回溯！
+ * 1、先确定组合的首元素，对剩下的元素递归的进行组合，确定以第一个元素为开头的所有组合；
+ * 2、分别使用其它元素作为首元素，重复上面的过程，直至求出所有的组合
+ */
+class Solution {
+public:
+    vector<vector<int>> combinationSum(vector<int>& candidates, int target) {
+        vector<vector<int>> res;
+        if (candidates.size() <= 0) {
+            return res;
+        }
+        
+        vector<int> cur_com;  // 记录某一个组合
+        
+        findCombinations_DFS(res, cur_com, candidates, target, 0);
+        
+        return res;
+    }
+    
+    // 计算candidates[pos~end]对应的组合
+    // pos: candidate中元素的下标。
+    void findCombinations_DFS(vector<vector<int>> &res, vector<int> &cur_com, vector<int> &candidates, int target, int pos) {
+        // 当前组合 = 目标值：递归终止
+        if (std::accumulate(cur_com.begin(), cur_com.end(), 0) == target) {
+            res.push_back(cur_com);
+            return;
+        }
+        
+        if (accumulate(cur_com.begin(), cur_com.end(), 0) > target) {
+            return;
+        }
+        
+       
+        // 先确定组合的首元素（candidates中每个元素都可以作为首元素，所以需要进行此大循环）
+        for (int i = pos; i < candidates.size(); ++i) {
+            cur_com.push_back(candidates[i]);
+            
+            // 递归的对剩下的元素进行组合
+            // 这里入参为 i 而不是 i+1：因为题目允许同一个数可以重复出现
+            findCombinations_DFS(res, cur_com, candidates, target, i);
+            
+            // 删除当前for循环添加的语句
+            // 此时curCom = [], 下一次for循环时，选择新的元素作为组合的首元素
+            cur_com.pop_back(); 
+        }
+    }
 };
 
 
@@ -845,60 +899,56 @@ public:
 
 
 //-------------- Dynamic Programming examples -----------------
-/** 120. Triangle
-* @author: zlm
-* @date: 2018-7-11 16:43
-* @description: 三角形中，从顶点到最底层的最短路径，每次只能移动到下一层的相邻结点
-* @method: 动态规划
-*/
-
-/* 动态规划-2018-7-11
-* 自上而下：f[i,j] 表示从（0，0）点到点（i,j）的最短路径和
-* 到达（i,j）的前一个点只能是：（i-1,j-1）,(i-1,j)
-* 故f[i,j] = min(f[i-1,j], f[i-1,j-1]) + tri[i,j];
-*/
+/** 120. Triangle 三角形最小路径和
+ * @brief: 三角形中，从顶点到最底层的最短路径，每次只能移动到下一层的相邻结点
+ * 如果正位于当前行的下标 i ，那么下一步可以移动到下一行的下标 i 或 i + 1 。
+ * @method: 动态规划
+ */
+// 把三角形中的点当作矩阵中的元素
+// 自上而下：f[i, j] 表示从（0，0）点到点（i, j）的最短路径和
+// 到达（i, j）的前一个点只能是: (i-1, j-1), (i-1, j)
+// 故f[i, j] = min(f[i-1, j], f[i-1, j-1]) + tri[i, j];
 
 class Solution120 {
 public:
   int minimumTotal(vector<vector<int>>& triangle) {
-    if (triangle.empty())
+    if (triangle.empty()) {
       return 0;
+    }
 
     int row = triangle.size();
-    vector<vector<int>> dp(row, vector<int>(row)); // 默认初值为0
+    vector<vector<int> > dp(row, vector<int>(row, 0)); 
 
     // 动态表赋初值
-    dp[0][0] = triangle[0][0]; // 第一行只有一个数
+    dp[0][0] = triangle[0][0];  // 第一行只有一个数
 
     for (int i = 1; i < row; i++) {
-      for (int j = 0; j < row; j++) {
-        if (j == 0) // 对于第一列，(i,j)的前一个落点只能是(i-1,j)
+      for (int j = 0; j < triangle[i].size(); j++) {
+        if (j == 0) {  // 对于第一列, (i, j) 的前一个落点只能是(i-1, j)
           dp[i][j] = dp[i - 1][j] + triangle[i][j];
-        else if (j == triangle[i].size() - 1) // 当前行的最后一列
-          dp[i][j] = dp[i - 1][j - 1] + triangle[i][j];
-        else
+        } else if (j == triangle[i].size() - 1) {  // 当前行的最后一列
+          dp[i][j] = dp[i - 1][j - 1] + triangle[i][j]; 
+        } else {
           dp[i][j] = min(dp[i - 1][j - 1], dp[i - 1][j]) + triangle[i][j];
-
+        }
       }
     }
   
-    // dp[row-1][j]存放着从（0,0）到最后一层各点的最短路径
+    // dp[row-1][j]存放着从（0, 0）到最后一层各点的最短路径
     int minimum = dp[row - 1][0];
     for (int i = 1; i < row; i++) {
       if (dp[row - 1][i] < minimum)
         minimum = dp[row - 1][i];
     }
-
+    // *std::min_element(dp[row-1].begin(), dp[row-1].end());
     return minimum;
   }
 };
 
 /** 64. Minimum Path Sum
-* @author: zlm
-* @date: 2018-7-11 17:43
-* @description: 从矩阵的左上角到右下角的最小路径和，每次只能向左和向下移动。
-* @method: 动态规划
-*/
+ * @brief: 从矩阵的左上角到右下角的最小路径和，每次只能向右和向下移动。
+ * @method: 动态规划
+ */
 class Solution64 {
 public:
   int minPathSum(vector<vector<int>>& grid) {
@@ -907,65 +957,67 @@ public:
     int row = grid.size();
     int col = grid[0].size();
 
-    vector<vector<int>> dp(row, vector<int>(col));
+    vector<vector<int>> dp(row, vector<int>(col, 0));
 
     // dp[0][0] = grid[0][0];
 
     for (int i = 0; i < row; i++) {
       for (int j = 0; j < col; j++) {
-        if (i == 0 && j == 0)
+        if (i == 0 && j == 0) {
           dp[i][j] = grid[i][j];
-        else if (j == 0 && i >= 1) // 第一列
+        } else if (j == 0) {   // 第一列
           dp[i][j] = dp[i - 1][j] + grid[i][j];
-        else if (i == 0 && j >= 1) // 计算第一行
+        } else if (i == 0) {  // 计算第一行
           dp[i][j] = dp[i][j - 1] + grid[i][j];
-        else {
+        } else {
           dp[i][j] = min(dp[i - 1][j], dp[i][j - 1]) + grid[i][j];
         }
       }
     }
-
     return dp[row - 1][col - 1];
   }  
 };
 
 /** 63. Unique Paths II: 带有障碍物，求路径个数
- * @author: zlm
- * @date: 2018-7-11 20:48
- * @description: 从矩阵的左上角到右下角的最小路径和，每次只能向左和向下移动。
+ * @brief: 从矩阵的左上角到右下角的最小路径和，每次只能向左和向下移动。
  * @method: 动态规划
  */
 class Solution63 {
 public:
   int uniquePathsWithObstacles(vector<vector<int>>& obstacleGrid) {
     // 边界条件
-    if (obstacleGrid.empty() || obstacleGrid[0].empty())
+    if (obstacleGrid.empty() || obstacleGrid[0].empty()) {
       return 0;
+    }
 
     int row = obstacleGrid.size();
     int col = obstacleGrid[0].size();
 
-    vector<vector<int>> dp(row, vector<int>(col));
+    vector<vector<int>> dp(row, vector<int>(col, 0));
+
     // 确定初值
-    dp[0][0] = obstacleGrid[0][0] == 0 ? 1 : 0; // 有障碍时，路径个数为0
+    dp[0][0] = obstacleGrid[0][0] == 0 ? 1 : 0;  // 有障碍时，路径个数为0
 
     // 第一列上的点只能向下走,注意障碍物
+    // 如果上一个点有路径，且当前点无障碍，则dp[i][0] = 1
     for (int i = 1; i < row; i++) {
-      dp[i][0] = (dp[i - 1][0] == 1 && obstacleGrid[i][0] == 0) ? 1 : 0; // 如果上一个点有路径，且当前点无障碍，则dp[i][0] = 1
+      dp[i][0] = (dp[i - 1][0] == 1 && obstacleGrid[i][0] == 0) ? 1 : 0;
     }
 
     // 第一行上的点只能向右走,注意障碍物
+    // 如果上一个点有路径，且当前点无障碍，则dp[0][j] = 1
     for (int j = 1; j < col; j++) {
-      dp[0][j] = (dp[0][j - 1] == 1 && obstacleGrid[0][j] == 0) ? 1 : 0; // 如果上一个点有路径，且当前点无障碍，则dp[0][j] = 1
+      dp[0][j] = (dp[0][j - 1] == 1 && obstacleGrid[0][j] == 0) ? 1 : 0;
     }
 
     // 其它点的递推公式
     for (int i = 1; i < row; i++) {
       for (int j = 1; j < col; j++) {
-        if (obstacleGrid[i][j] == 1)
+        if (obstacleGrid[i][j] == 1) {
           dp[i][j] = 0;
-        else
+        } else {
           dp[i][j] = dp[i - 1][j] + dp[i][j - 1];
+        }
       }
     }
 

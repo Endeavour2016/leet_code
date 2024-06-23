@@ -10,6 +10,59 @@
 
 using namespace std;
 
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+
+
+/**
+ * @brief: 114. 二叉树展开为链表
+ * 给你二叉树的根结点 root ，请你将它展开为一个单链表：
+ * 展开后的单链表应该同样使用 TreeNode ，其中 right 子指针指向链表中下一个结点，而左子指针始终为 null
+ * 展开后的单链表应该与二叉树 先序遍历 顺序相同。
+ * @method: 递归/先序遍历
+ */
+void flatten(TreeNode* root) {
+    // 1.递归终止条件
+    if (nullptr == root) {
+        return;
+    }
+    TreeNode* left_node = root->left;
+    TreeNode* right_node = root->right;
+
+    // 2.递归构造左链和右链
+    flatten(left_node);
+    flatten(right_node);
+
+
+    // 3.把right_node对应的链拼接到left_node链尾部
+    if (left_node != nullptr) {
+        // 挂上左链
+        root->right = left_node;
+
+        // 挂上右链
+        TreeNode* temp_ptr = left_node;
+
+        while (temp_ptr->right != nullptr) {
+            temp_ptr = temp_ptr->right;
+        }
+        temp_ptr->right = right_node;
+    } else {  // 左链为空，此时只需要拼接右链
+        root->right = right_node;
+    }
+    
+    root->left = nullptr;
+}
+
+
 
 /**
  * @brief: 112. 路径总和 (easy)
@@ -32,8 +85,6 @@ public:
             return false;
     }
 };
-
-
 
 
 /**
@@ -276,17 +327,18 @@ vector<int> postorderTraversal(TreeNode* root) {
 
 
 /**
- * @problem: 105. Construct Binary Tree from Preorder and Inorder Traversal
- * @descr:
+ * @brief: 105. Construct Binary Tree from Preorder and Inorder Traversal
+ * 根据前序和中序结果，构造二叉树
+ * 题目保证输入数据均正确，且数中没有重复数字
  * Given two integer arrays preorder and inorder where preorder is the preorder 
  * traversal of a binary tree and inorder is the inorder traversal of the same tree,
  * construct and return the binary tree.
- * 根据前序和中序结果，构造二叉树
- * 题目保证输入数据均正确，且数中没有重复数字
  * 
- * 思路：利⽤递归思想，根据前序获得root，根据中序得到左⼦树和右⼦树
- * 计算左子树的preorder和inorder,递归构造左子树
- * 右子树同上
+ * @method: 递归
+ * 1.根据前序获得root
+ * 2.然后找到root在中序中的位置：root左侧序列左子树的中序结果，右侧为右子树的中序结果。
+ * 3.计算左子树的preorder和inorder, 递归构造左子树
+ * 4.右子树同上
  */
 TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
   if (preorder.empty() || inorder.empty()) {
@@ -308,6 +360,7 @@ TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
   }
 
   // 计算左右子树的中序序列
+  // 为优化空间，这里可以只记录原始序列的下标
   vector<int> left_tree_inorder(inorder.begin(), inorder.begin() + root_node_index);
   vector<int> right_tree_inorder(inorder.begin() + root_node_index + 1, inorder.end());
   
@@ -321,6 +374,52 @@ TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
   root->right = buildTree(right_tree_preorder, right_tree_inorder);
   return root;
 }
+
+/**
+ * @brief: 106. 从中序与后序遍历序列构造二叉树
+ * @method: 递归
+ * 1.根据后序获得root
+ * 2.然后找到root在中序中的位置：root左侧序列左子树的中序结果，右侧为右子树的中序结果。
+ * 3.计算左子树的 inorder 和 postorder, 递归构造左子树
+ * 4.右子树同上
+ */
+class Solution {
+public:
+	TreeNode *buildTree(vector<int> &inorder, vector<int> &postorder) {
+		if (inorder.empty() || postorder.empty()) {
+			return nullptr;
+    }
+		
+    int inorder_len = inorder.size();
+    int root_val = postorder.back();
+		TreeNode *root = new TreeNode(root_val);
+
+		// 划分出子序列：inorder
+		int pivot = 0;
+		for (pivot = 0; pivot < inorder_len; pivot++) {
+			if (root_val == inorder[pivot]) {
+				break;
+      }
+		}
+
+		// 左子树中序和后序
+		vector<int> leftInorder(inorder.begin(), inorder.begin() + pivot);
+		vector<int> leftPostorder(postorder.begin(), postorder.begin() + pivot);
+
+		// 右子树中序和后序
+		vector<int> rightInorder(inorder.begin()+pivot+1, inorder.end());
+    // 左子树的序列长度为 pivot
+		vector<int> rightPostorder(postorder.begin()+pivot, postorder.end()-1);
+
+		// 递归
+		root->left = buildTree(leftInorder, leftPostorder);
+		root->right = buildTree(rightInorder, rightPostorder);
+
+		return root;
+	}
+};
+
+
 
 /**
  * @problem: 701 Insert into a Binary Search Tree(Medium) 
