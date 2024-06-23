@@ -2,12 +2,40 @@
  * @Author: zlm 
  * @Date: 2021-07-09 23:04:48 
  * @Last Modified by: zlm
- * @Last Modified time: 2024-5-26 14:00
+ * @Last Modified time: 2024-6-23 11:00
  */
 
 #include "../head_file.h"
 #include "../data_structure.h"
 using namespace std;
+
+/**
+ * @brief: 108. 将有序数组转换为二叉搜索树(easy)
+ * 给你一个整数数组 nums ，其中元素已经按 升序 排列，请你将其转换为一棵 平衡二叉搜索树。
+ * @method: 递归求解，与之前链表转换成BST思路相同
+ */
+
+// 二叉树是平衡的，因此其中序遍历结果为有序的的，且中间元素即为root节点。
+TreeNode *sortedArrayToBST(vector<int> &num) {
+    if (num.empty()) {
+        return nullptr;
+    }
+    // 先取出升序序列中间值mid
+    int mid = num.size() / 2;
+
+    // 确定root的值
+    TreeNode *root = new TreeNode(num[mid]);
+
+    // 递归处理
+    //num[0~mid-1]
+    vector<int> left(num.begin(), num.begin() + mid);
+    // num[mid+1~end]
+    vector<int> right(num.begin()+mid+1, num.end()); 
+    
+    root->left = sortedArrayToBST(left);
+    root->right = sortedArrayToBST(right);
+    return root;
+}
 
 
 /**
