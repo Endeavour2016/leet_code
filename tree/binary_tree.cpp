@@ -22,6 +22,45 @@ using namespace std;
  * };
  */
 
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+
+/**
+ * @brief: 98. 验证二叉搜索树
+ * 给你一个二叉树的根节点 root ，判断其是否是一个有效的二叉搜索树。
+ * 有效 二叉搜索树定义如下：
+ * @method: 递归/中序遍历
+ * 设计一个递归函数 helper(root, lower, upper) ：考虑以 root 为根的子树，
+ * 判断子树中所有节点的值是否都在 (l,r) 的范围内（注意是开区间）。
+ * 如果 root 节点的值 val 不在 (l,r) 的范围内说明不满足条件，否则我们要继续递归调用检查它的左右子树是否满足
+ */
+class Solution {
+public:
+    bool helper(TreeNode* root, long long lower, long long upper) {
+        if (root == nullptr) {
+            return true;
+        }
+        if (root->val <= lower || root->val >= upper) {
+            return false;
+        }
+        // 左子树所有节点小于 root，因此 upper 设置为 root->val
+        // 右子树所有节点大于 root，因此 lower 设置为 root->val
+        return helper(root -> left, lower, root -> val) && helper(root -> right, root -> val, upper);
+    }
+    bool isValidBST(TreeNode* root) {
+        return helper(root, LONG_MIN, LONG_MAX);
+    }
+};
+
 
 /**
  * @brief: 114. 二叉树展开为链表
