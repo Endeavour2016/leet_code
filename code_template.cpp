@@ -1,25 +1,27 @@
 /**
- * @Author: zlm 
- * @Date: 2021-02-27 20:53:57 
- * @Last Modified by: zlm
- * @Last Modified time: 2022-02-04 16:49:04
- */
-#include "head_file.h"
-#include "data_structure.h"
-using namespace std;
-
-
-/**
- * @problem:
- * @descr:
- * @method:
+ * <problem id>. <problem title>
+ *
+ * Core idea:
+ * Invariant:
+ * Time: O(...), space: O(...).
+ * First mistake / review note:
  */
 
+#include <cassert>
+#include <vector>
+
+class Solution {
+ public:
+  int solve(const std::vector<int>& nums) {
+    // Replace this example implementation with the LeetCode solution.
+    return static_cast<int>(nums.size());
+  }
+};
 
 int main() {
-  system("pause");
+  Solution solution;
+  // Keep an example, a boundary case and a counterexample here.
+  assert(solution.solve({1, 2, 3}) == 3);
+  assert(solution.solve({}) == 0);
   return 0;
 }
-
-// Tips
-// ctrl + alt + i 自动插入日期信息

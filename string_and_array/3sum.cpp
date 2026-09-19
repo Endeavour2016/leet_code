@@ -6,6 +6,7 @@
  */
 
 #include "../head_file.h"
+#include <cassert>
 using namespace std;
 
 /**
@@ -21,7 +22,7 @@ using namespace std;
 // method1: 先确定第一个数a，剩下两个数按照two sum解法进行（左右夹逼）；
 // 由于三元组之间的数字不能重复，因此先对数组排序，保证相同的数字相邻，方便遍历过程中去重
 // 时间复杂度：O(nlogn + O(n^2))
-vector<vector<int>> threeSum(vector<int>& nums) {
+vector<vector<int>> threeSumTwoPointers(vector<int> nums) {
     vector<vector<int>> res;
     if (nums.size() <= 2) {
         return res;
@@ -70,7 +71,7 @@ vector<vector<int>> threeSum(vector<int>& nums) {
 // method2: 三重循环+双指针法减少遍历次数
 // 时间复杂度：排序的O(nlogn) + 遍历O(N^2) 
 // ex: [1, 1, 1, -2, -2, -3, 4, xxx]
-vector<vector<int>> threeSum(vector<int>& nums) {
+vector<vector<int>> threeSumLoopOptimized(vector<int> nums) {
     std::vector<std::vector<int> > res;
     int count = nums.size();
     if (count == 0) {
@@ -124,7 +125,12 @@ vector<vector<int>> threeSum(vector<int>& nums) {
 }
 
 int main() {
+  vector<int> nums = {-1, 0, 1, 2, -1, -4};
+  const vector<vector<int>> expected = {{-1, -1, 2}, {-1, 0, 1}};
+  assert(threeSumTwoPointers(nums) == expected);
+  assert(threeSumLoopOptimized(nums) == expected);
+  assert(threeSumTwoPointers(vector<int>{0, 0, 0}) ==
+         vector<vector<int>>({{0, 0, 0}}));
+  assert(threeSumTwoPointers(vector<int>{1, 2, -2, -1}).empty());
   return 0;
 }
-
-

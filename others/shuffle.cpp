@@ -1,31 +1,41 @@
-#include "head_file.h"
+/**
+ * 384. Shuffle an Array
+ *
+ * `std::shuffle` implements a uniform permutation using the supplied random
+ * engine. Keep the original array unchanged so reset() is reliable.
+ * Time: O(n), extra space: O(n) for the returned copy.
+ */
 
-using namespace std;
+#include <algorithm>
+#include <cassert>
+#include <random>
+#include <utility>
+#include <vector>
 
-// shuffle an array: 2019-3-17
-// 洗牌算法，可以使用 STL 里的 random_shuffle
 class Solution {
-private:
-    vector<int> origin;
-public:
-    Solution(vector<int> nums) : origin(nums) {}
-    
-    /** Resets the array to its original configuration and return it. */
-    vector<int> reset() {
-        return origin;
-    }
-    
-    /** Returns a random shuffling of the array. */
-    vector<int> shuffle() {
-        vector<int> res = origin;
-        random_shuffle(res.begin(), res.end());
-        return res;
-    }
+ public:
+  explicit Solution(std::vector<int> nums)
+      : original_(std::move(nums)), engine_(std::random_device{}()) {}
+
+  std::vector<int> reset() const { return original_; }
+
+  std::vector<int> shuffle() {
+    std::vector<int> result = original_;
+    std::shuffle(result.begin(), result.end(), engine_);
+    return result;
+  }
+
+ private:
+  std::vector<int> original_;
+  std::mt19937 engine_;
 };
 
-/**
- * Your Solution object will be instantiated and called as such:
- * Solution obj = new Solution(nums);
- * vector<int> param_1 = obj.reset();
- * vector<int> param_2 = obj.shuffle();
- */
+int main() {
+  Solution solution({1, 2, 3, 4});
+  assert(solution.reset() == std::vector<int>({1, 2, 3, 4}));
+  auto shuffled = solution.shuffle();
+  std::sort(shuffled.begin(), shuffled.end());
+  assert(shuffled == std::vector<int>({1, 2, 3, 4}));
+  assert(solution.reset() == std::vector<int>({1, 2, 3, 4}));
+  return 0;
+}
