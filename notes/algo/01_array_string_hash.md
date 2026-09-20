@@ -15,7 +15,7 @@ unordered_map<int, int> count;
 for (int x : nums) ++count[x];
 ```
 
-若字符集固定且很小，优先用数组计数，常数更小。仓库中的有效字母异位词使用 26 个计数槽：[242_valid_anagram.cc](../string_and_array/242_valid_anagram.cc#L17-L34)。
+若字符集固定且很小，优先用数组计数，常数更小。仓库中的有效字母异位词使用 26 个计数槽：[242_valid_anagram.cc](../../algo/string_and_array/242_valid_anagram.cc#L17-L34)。
 
 ### 2. 前缀和 + 哈希
 
@@ -31,7 +31,7 @@ for (int x : nums) {
 }
 ```
 
-关键是先放入 `{0, 1}`，它代表从下标 0 开始的子数组。仓库中已有朴素与哈希两种写法，但目前同名重定义，仍属待迁移代码：[lcr_solution.cc](../LCR/lcr_solution.cc#L69-L119)。
+关键是先放入 `{0, 1}`，它代表从下标 0 开始的子数组。仓库中已有朴素与哈希两种写法，但目前同名重定义，仍属待迁移代码：[lcr_solution.cc](../../algo/LCR/lcr_solution.cc#L69-L119)。
 
 ### 3. 区间合并
 
@@ -43,7 +43,7 @@ for (int x : nums) {
 结果:   [1-------------9]
 ```
 
-代表实现：[56_merge_intervals.cpp](../string_and_array/56_merge_intervals.cpp#L22-L44)。
+代表实现：[56_merge_intervals.cpp](../../algo/string_and_array/56_merge_intervals.cpp#L22-L44)。
 
 ## 复杂度与易错点
 

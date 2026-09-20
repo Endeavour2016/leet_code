@@ -13,7 +13,7 @@ Result solve(TreeNode* root) {
 }
 ```
 
-例如验证 BST 时，递归参数携带当前节点允许的开区间 `(lower, upper)`：[binary_tree.cpp](../tree/binary_tree.cpp#L46-L62)。该文件有未提交改动且包含重复 `Solution`，本轮只引用、不迁移。
+例如验证 BST 时，递归参数携带当前节点允许的开区间 `(lower, upper)`：[binary_tree.cpp](../../algo/tree/binary_tree.cpp#L46-L62)。该历史文件包含重复 `Solution`，尚未纳入默认构建。
 
 ## DFS、BFS 与回溯
 
@@ -46,11 +46,11 @@ flowchart TD
   E --> G
 ```
 
-恢复 IP 地址展示了“层数、起点、合法性剪枝”三件事：[bm74_restore_ip_addresses.cpp](../DP/bm74_restore_ip_addresses.cpp#L13-L56)。
+恢复 IP 地址展示了“层数、起点、合法性剪枝”三件事：[bm74_restore_ip_addresses.cpp](../../algo/DP/bm74_restore_ip_addresses.cpp#L13-L56)。
 
 ## Trie：用路径表示前缀
 
-Trie 节点不保存完整单词；从根到节点的路径就是前缀，`is_word` 区分“只是前缀”和“完整单词”。仓库实现：[208_trie.cpp](../tree/208_trie.cpp#L29-L92)。
+Trie 节点不保存完整单词；从根到节点的路径就是前缀，`is_word` 区分“只是前缀”和“完整单词”。仓库实现：[208_trie.cpp](../../algo/tree/208_trie.cpp#L29-L92)。
 
 ```text
 root

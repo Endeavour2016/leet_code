@@ -18,7 +18,7 @@ while (left <= right) {
 return -1;
 ```
 
-已验证实现：[704_binary_search.cpp](../binary_search/704_binary_search.cpp#L15-L41)。
+已验证实现：[704_binary_search.cpp](../../algo/binary_search/704_binary_search.cpp#L15-L41)。
 
 ## 为什么是 `left <= right`
 
@@ -47,7 +47,7 @@ while (left <= right) {
 }
 ```
 
-旋转数组的关键是每轮至少有一半有序，再判断目标是否落在这一半。矩阵、平方根和“第 K 小”也可转化为单调判定；平方根示例：[math_solution.cc](../math/math_solution.cc#L20-L40)。
+旋转数组的关键是每轮至少有一半有序，再判断目标是否落在这一半。矩阵、平方根和“第 K 小”也可转化为单调判定；平方根示例：[math_solution.cc](../../algo/math/math_solution.cc#L20-L40)。
 
 ## 易错点
 

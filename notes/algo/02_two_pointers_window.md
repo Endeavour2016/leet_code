@@ -15,11 +15,11 @@ for (int value : nums) {
 }
 ```
 
-已验证示例：[27_remove_element.cpp](../string_and_array/27_remove_element.cpp#L13-L39)。
+已验证示例：[27_remove_element.cpp](../../algo/string_and_array/27_remove_element.cpp#L13-L39)。
 
 ## 相向双指针：有序数组夹逼
 
-三数之和先排序、固定第一个数，再让左右指针逼近目标：[3sum.cpp](../string_and_array/3sum.cpp#L25-L66)。
+三数之和先排序、固定第一个数，再让左右指针逼近目标：[3sum.cpp](../../algo/string_and_array/3sum.cpp#L25-L66)。
 
 ```text
 [-4, -1, -1, 0, 1, 2]
