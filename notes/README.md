@@ -17,16 +17,25 @@ flowchart LR
 
 ## 章节导航
 
-1. [数组、字符串与哈希](01_array_string_hash.md)
-2. [双指针与滑动窗口](02_two_pointers_window.md)
-3. [栈、队列与堆](03_stack_queue_heap.md)
-4. [链表](04_linked_list.md)
-5. [树、Trie 与搜索](05_tree_trie_search.md)
-6. [二分查找](06_binary_search.md)
-7. [动态规划与贪心](07_dynamic_programming_greedy.md)
-8. [位运算、数学与杂项](08_bit_math_misc.md)
-9. [仓库审查与刷题工作流](09_repository_review_and_workflow.md)
-10. [用 CMake 管理刷题代码](10_cmake_for_leetcode.md)
+1. [数组、字符串与哈希](algo/01_array_string_hash.md)
+2. [双指针与滑动窗口](algo/02_two_pointers_window.md)
+3. [栈、队列与堆](algo/03_stack_queue_heap.md)
+4. [链表](algo/04_linked_list.md)
+5. [树、Trie 与搜索](algo/05_tree_trie_search.md)
+6. [二分查找](algo/06_binary_search.md)
+7. [动态规划与贪心](algo/07_dynamic_programming_greedy.md)
+8. [位运算、数学与杂项](algo/08_bit_math_misc.md)
+9. [仓库审查与刷题工作流](workflow/09_repository_review_and_workflow.md)
+10. [用 CMake 管理刷题代码](workflow/10_cmake_for_leetcode.md)
+
+## 历史归档
+
+- [2026-09-20 目录与构建入口重构](archive/2026-09-20_repository_refactor.md)
+
+- [早期解题笔记](archive/solution_notes.md)
+- [2026-09-19 首轮实施记录](archive/2026-09-19_implementation_plan.md)（保留当时的路径与结论）
+
+算法专题放在 `notes/algo/`，工程与构建指南放在 `notes/workflow/`，历史资料放在 `notes/archive/`。
 
 ## 推荐复习顺序
 
@@ -40,9 +49,9 @@ flowchart LR
 
 ## 本仓库的规范示例
 
-- 二分查找：[704_binary_search.cpp](../binary_search/704_binary_search.cpp#L15-L41)
-- 双指针：[27_remove_element.cpp](../string_and_array/27_remove_element.cpp#L13-L39)
-- 动态规划/状态压缩思维：[121_best_time_to_buy_and_sell_stock.cpp](../DP/121_best_time_to_buy_and_sell_stock.cpp#L14-L34)
-- 回溯：[bm74_restore_ip_addresses.cpp](../DP/bm74_restore_ip_addresses.cpp#L13-L68)
+- 二分查找：[704_binary_search.cpp](../algo/binary_search/704_binary_search.cpp#L15-L41)
+- 双指针：[27_remove_element.cpp](../algo/string_and_array/27_remove_element.cpp#L13-L39)
+- 动态规划/状态压缩思维：[121_best_time_to_buy_and_sell_stock.cpp](../algo/DP/121_best_time_to_buy_and_sell_stock.cpp#L14-L34)
+- 回溯：[bm74_restore_ip_addresses.cpp](../algo/DP/bm74_restore_ip_addresses.cpp#L13-L68)
 
 > 历史代码中存在尚未迁移或未测试的实现。笔记只把通过本地构建和断言测试的文件标为“已验证”。

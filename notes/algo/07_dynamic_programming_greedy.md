@@ -26,7 +26,7 @@ for (int i = 1; i < n; ++i) {
 }
 ```
 
-股票只能交易一次时，“截至今天的最低买入价”就是压缩后的历史状态；已验证实现：[121_best_time_to_buy_and_sell_stock.cpp](../DP/121_best_time_to_buy_and_sell_stock.cpp#L14-L34)。
+股票只能交易一次时，“截至今天的最低买入价”就是压缩后的历史状态；已验证实现：[121_best_time_to_buy_and_sell_stock.cpp](../../algo/DP/121_best_time_to_buy_and_sell_stock.cpp#L14-L34)。
 
 ## 背包遍历顺序
 
@@ -38,7 +38,7 @@ for (int i = 1; i < n; ++i) {
 
 贪心适用时，每一步只保留对未来最有利的状态。判断标准不是“看起来最优”，而是能用交换论证或覆盖范围证明：替换为当前选择不会让全局答案变差。
 
-股票可多次交易时，所有正的相邻差值都可以收入囊中：[122_best_time_to_buy_and_sell_stock_ii.cpp](../DP/122_best_time_to_buy_and_sell_stock_ii.cpp#L13-L30)。这等价于把一段连续上涨拆成若干天收益：
+股票可多次交易时，所有正的相邻差值都可以收入囊中：[122_best_time_to_buy_and_sell_stock_ii.cpp](../../algo/DP/122_best_time_to_buy_and_sell_stock_ii.cpp#L13-L30)。这等价于把一段连续上涨拆成若干天收益：
 
 ```text
 1 -> 3 -> 5

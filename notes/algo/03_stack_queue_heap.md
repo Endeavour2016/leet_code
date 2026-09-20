@@ -2,7 +2,7 @@
 
 ## 栈：处理最近尚未完成的事情
 
-栈是“后进先出”。括号匹配时，栈顶就是最近一个尚未闭合的左括号；表达式求值时，栈保存暂时不能结算的状态。括号实现入口：[20_valid_parentheses.cpp](../stack/20_valid_parentheses.cpp#L22-L45)。
+栈是“后进先出”。括号匹配时，栈顶就是最近一个尚未闭合的左括号；表达式求值时，栈保存暂时不能结算的状态。括号实现入口：[20_valid_parentheses.cpp](../../algo/stack/20_valid_parentheses.cpp#L22-L45)。
 
 ```cpp
 stack<char> pending;
@@ -26,7 +26,7 @@ return pending.empty();
 新来 5:  -3、-1、3 都永久失去竞争资格 -> 只留 5
 ```
 
-代表实现：[slide_window_max.cpp](../queue/slide_window_max.cpp#L29-L69)。每个下标最多入队、出队各一次，因此时间为 `O(n)`。
+代表实现：[slide_window_max.cpp](../../algo/queue/slide_window_max.cpp#L29-L69)。每个下标最多入队、出队各一次，因此时间为 `O(n)`。
 
 ## 堆：只关心动态极值
 
@@ -40,7 +40,7 @@ for (int x : nums) {
 }
 ```
 
-仓库示例：[find_kth_largest.cpp](../top_k/find_kth_largest.cpp#L22-L37)。复杂度为 `O(n log k)`，空间为 `O(k)`。
+仓库示例：[find_kth_largest.cpp](../../algo/top_k/find_kth_largest.cpp#L22-L37)。复杂度为 `O(n log k)`，空间为 `O(k)`。
 
 ## 选择口诀
 

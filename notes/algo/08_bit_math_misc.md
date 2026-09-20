@@ -23,7 +23,7 @@ for (int bit = 0; bit < 32; ++bit) {
 }
 ```
 
-仓库的 32 位反转实现使用了逐位扫描：[bits_reverse.cpp](../bit_manipulation/bits_reverse.cpp#L19-L29)。注意使用无符号整数，避免有符号右移和最高位溢出的歧义。
+仓库的 32 位反转实现使用了逐位扫描：[bits_reverse.cpp](../../algo/bit_manipulation/bits_reverse.cpp#L19-L29)。注意使用无符号整数，避免有符号右移和最高位溢出的歧义。
 
 ## 数学题的三个切入点
 
@@ -31,11 +31,11 @@ for (int bit = 0; bit < 32; ++bit) {
 2. 找周期：取模、循环节、数字位变化。
 3. 控制溢出：用除法比较代替乘法，或提升到 `long long`。
 
-平方根中判断 `mid * mid <= x` 可能溢出，更稳妥的写法是 `mid <= x / mid`。仓库现有平方根实现可作为待改进案例：[math_solution.cc](../math/math_solution.cc#L20-L40)。
+平方根中判断 `mid * mid <= x` 可能溢出，更稳妥的写法是 `mid <= x / mid`。仓库现有平方根实现可作为待改进案例：[math_solution.cc](../../algo/math/math_solution.cc#L20-L40)。
 
 ## 随机洗牌
 
-不要使用 C++17 已移除的 `random_shuffle`。规范实现使用 `std::shuffle` 和显式随机引擎，并通过排序检查结果仍是原数组的一个排列：[shuffle.cpp](../others/shuffle.cpp#L12-L39)。
+不要使用 C++17 已移除的 `random_shuffle`。规范实现使用 `std::shuffle` 和显式随机引擎，并通过排序检查结果仍是原数组的一个排列：[shuffle.cpp](../../algo/others/shuffle.cpp#L12-L39)。
 
 ## 杂项题处理原则
 

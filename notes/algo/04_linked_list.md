@@ -18,7 +18,7 @@ ListNode dummy(0, head);
 ListNode* previous = &dummy;
 ```
 
-仓库的“删除全部重复节点”实现展示了虚拟头节点思路：[83_remove_duplicates.cpp](../linked_list/83_remove_duplicates.cpp#L126-L145)。该历史文件包含多种实现，尚未纳入默认 CMake 构建。
+仓库的“删除全部重复节点”实现展示了虚拟头节点思路：[83_remove_duplicates.cpp](../../algo/linked_list/83_remove_duplicates.cpp#L126-L145)。该历史文件包含多种实现，尚未纳入默认 CMake 构建。
 
 ## 反转链表模板
 
@@ -43,7 +43,7 @@ return previous;
 
 ## LRU：哈希表 + 双向链表
 
-哈希表负责 `O(1)` 找节点，双向链表负责 `O(1)` 移动和淘汰。仓库实现使用 `list` 保存访问顺序，用 map 保存迭代器：[146_lru_cache.cpp](../linked_list/146_lru_cache.cpp#L18-L63)。
+哈希表负责 `O(1)` 找节点，双向链表负责 `O(1)` 移动和淘汰。仓库实现使用 `list` 保存访问顺序，用 map 保存迭代器：[146_lru_cache.cpp](../../algo/linked_list/146_lru_cache.cpp#L18-L63)。
 
 ```mermaid
 flowchart LR
