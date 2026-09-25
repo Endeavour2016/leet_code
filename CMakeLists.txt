@@ -11,3 +11,5 @@ include(CTest)
 include(cmake/AddLeetCodeProblem.cmake)
 
 add_subdirectory(algo)
+
+add_subdirectory(engineering)

@@ -1,6 +1,8 @@
-# LeetCode 刷题与复习
+# 算法与工程面试复习
 
-算法代码放在 `algo/`，复习笔记从 [notes/README.md](notes/README.md) 开始阅读。
+算法代码放在 `algo/`，工程面试实现放在 `engineering/`。复习笔记从 [notes/README.md](notes/README.md) 开始阅读。
+
+新增 [C++11 与检索系统工程面试题库](notes/engineering/README.md)：16 道分层题目，包含清晰的原理推导、简洁实现、面试追问与评分参考。可用 `make run eng_thread_pool` 运行工程题。
 
 ## 日常构建
 
@@ -32,6 +34,8 @@ make help                          # 查看帮助
 | 程序目录 | `build/debug/bin/` | `build/release/bin/` |
 | 使用场景 | 日常刷题、排查错误、验证结果 | 需要优化版本时；性能测量需另写实际执行算法的入口 |
 
+新增工程示例使用始终执行的 `CHECK`，Release 也会运行其检查；上表中 assert 的行为主要影响历史算法示例。
+
 上面的编译参数来自当前 Apple Clang 构建配置；其他编译器或手动覆盖参数后可能不同。两个构建目录独立，切换模式无需清理，也不会互相覆盖。
 
 **日常刷题用 `make run <题目>`，全部验证用 `make test`。** `make run` 始终编译并运行 Debug；`make test` 始终编译 Debug 后运行全部已注册测试。
@@ -47,7 +51,7 @@ make release lc_704_binary_search     # 只编译单题的 Release 版本
 ```
 
 
-当前只构建已注册的 7 道题目。原生 CMake 命令仍可使用，详见 [构建指南](notes/workflow/10_cmake_for_leetcode.md)。
+当前构建已注册的 7 道算法题和 16 道工程面试题。工程目标独立要求 C++11；算法目标保留 C++17。原生 CMake 命令仍可使用，详见 [构建指南](notes/workflow/10_cmake_for_leetcode.md)。
 
 ## 目录约定
 
@@ -55,7 +59,8 @@ make release lc_704_binary_search     # 只编译单题的 Release 版本
 leet_code/
 ├── Makefile                # 日常入口：make build / debug / release / test
 ├── CMakeLists.txt          # 项目配置与 algo 子目录入口
-├── algo/                   # 题目代码
+├── engineering/            # C++11 工程与检索面试示例
+├── algo/                   # 算法题目代码
 │   ├── CMakeLists.txt      # 可构建题目的注册清单
 │   ├── binary_search/     # 按现有算法专题分类
 │   ├── DP/
@@ -70,6 +75,7 @@ leet_code/
 ├── notes/
 │   ├── README.md          # 笔记导航
 │   ├── algo/              # 算法模型与专题复习
+│   ├── engineering/       # 工程面试题目、题解、追问与评分
 │   ├── workflow/          # 刷题规范、CMake 构建指南
 │   └── archive/           # 旧笔记和历史实施记录
 ├── tools/

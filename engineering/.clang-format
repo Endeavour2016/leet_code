@@ -1,0 +1,17 @@
+# 工程面试示例：基于 Google C++ 格式，统一使用完整花括号。
+# InsertBraces 需要 clang-format 15 或更新版本。
+BasedOnStyle: Google
+Language: Cpp
+Standard: c++11
+IndentWidth: 2
+ColumnLimit: 80
+InsertBraces: true
+AllowShortBlocksOnASingleLine: Never
+AllowShortFunctionsOnASingleLine: None
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+AllowShortLambdasOnASingleLine: None
+BinPackArguments: false
+BinPackParameters: false
+IncludeBlocks: Regroup
+ReflowComments: false
