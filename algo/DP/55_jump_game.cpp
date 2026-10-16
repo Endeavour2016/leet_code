@@ -41,7 +41,6 @@ bool canJump(vector<int>& nums) {
   return true;
 }
 
-
 /**
  * @problem: 45. Jump GameII (求最少跳跃次数)
  * @descr: 给定一个长度为 n 的 整数数组 nums，初始位置为 nums[0]。
@@ -89,4 +88,10 @@ int jump2(vector<int>& nums) {
     }
     // 如果在while循环内没有return step，说明没法移动到最后位置
     return -1;
+}
+
+int main() {
+  std::vector<int> nums{2, 3, 1, 1, 4};
+  std::cout << std::boolalpha << canJump(nums) << '\n';
+  return 0;
 }

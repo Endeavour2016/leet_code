@@ -41,3 +41,10 @@ add_leetcode_problem(
     SOURCE others/shuffle.cpp
     CATEGORY array
 )
+
+add_leetcode_problem(
+    NAME lc_55_jump_game
+    SOURCE DP/55_jump_game.cpp
+    CATEGORY array
+)
+

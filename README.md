@@ -1,5 +1,9 @@
 # 算法与工程面试复习
 
+> 创建日期：未知（历史文档未记录）
+> 修改日期：2026-10-04
+> AI辅助模型：GPT-6（未确认具体型号）
+
 算法代码放在 `algo/`，工程面试实现放在 `engineering/`。复习笔记从 [notes/README.md](notes/README.md) 开始阅读。
 
 新增 [C++11 与检索系统工程面试题库](notes/engineering/README.md)：16 道分层题目，包含清晰的原理推导、简洁实现、面试追问与评分参考。可用 `make run eng_thread_pool` 运行工程题。
@@ -14,7 +18,7 @@ make debug                         # 同 make build
 make release                       # 配置并编译 Release
 make build lc_704_binary_search     # 只编译一道题
 make run lc_704_binary_search       # 编译并运行一道题
-make test                          # 编译并运行全部断言测试
+make test                          # 编译并运行全部已注册的题目程序
 make help                          # 查看帮助
 ```
 
@@ -38,20 +42,24 @@ make help                          # 查看帮助
 
 上面的编译参数来自当前 Apple Clang 构建配置；其他编译器或手动覆盖参数后可能不同。两个构建目录独立，切换模式无需清理，也不会互相覆盖。
 
-**日常刷题用 `make run <题目>`，全部验证用 `make test`。** `make run` 始终编译并运行 Debug；`make test` 始终编译 Debug 后运行全部已注册测试。
+### make run 和 make test 的区别
+
+`make run <题目>` 编译 Debug 版本，并直接运行指定题目的可执行程序。`make test` 编译全部 Debug 目标，再由 CTest 逐个运行已注册的可执行程序。两者运行的是同一批题目程序；区别在于运行单题还是全部已注册题目，以及后者由 CTest 汇总程序的通过或失败状态。
+
+这里的“CTest 测试”以**一个题目程序为单位**。CTest 启动该程序，程序从 `main()` 执行，并根据退出状态判断通过或失败；它不会自动发现 `main()` 内的每条断言。检查代码写在题目源码中，例如 [二分查找的 `main()`](algo/binary_search/704_binary_search.cpp) 使用 `assert`，[线程池的 `main()`](engineering/concurrency/03_thread_pool.cpp) 使用 `CHECK`。这不是使用 GoogleTest 的 `TEST` / `TEST_F` 定义、逐个报告测试用例的测试套件；即使一个 `main()` 检查多个输入，CTest 仍只报告该题目程序的一条结果。可运行的题目分别在 [算法题注册清单](algo/CMakeLists.txt) 和 [工程题注册清单](engineering/CMakeLists.txt) 中列出。
 
 本仓库许多题目把算法调用直接写在 `assert(...)` 内，Release 会连同这些调用一起移除。因此 Release 程序正常退出不代表题解验证通过，也不能直接用这样的入口比较算法性能。
 
 ```bash
 make build lc_704_binary_search       # 只编译单题的 Debug 版本
-make run lc_704_binary_search         # 编译并运行 Debug 断言检查
-make test                            # 编译并检查全部已注册题目
+make run lc_704_binary_search         # 编译并运行该题的 Debug 程序
+make test                            # 编译并由 CTest 运行全部已注册题目程序
 make release lc_704_binary_search     # 只编译单题的 Release 版本
 ./build/release/bin/lc_704_binary_search # 手动运行 Release，断言不会执行
 ```
 
 
-当前构建已注册的 7 道算法题和 16 道工程面试题。工程目标独立要求 C++11；算法目标保留 C++17。原生 CMake 命令仍可使用，详见 [构建指南](notes/workflow/10_cmake_for_leetcode.md)。
+当前构建已注册的 8 道算法题和 16 道工程面试题。工程目标独立要求 C++11；算法目标保留 C++17。原生 CMake 命令仍可使用，详见 [构建指南](notes/workflow/10_cmake_for_leetcode.md)。
 
 ## 目录约定
 
