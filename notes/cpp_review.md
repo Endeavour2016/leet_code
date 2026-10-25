@@ -580,11 +580,90 @@ int main() {
 
 这里的 `Record` 是标准布局类型，可安全用 `offsetof`；不要把它随意用在有虚函数等复杂布局的类上。调整成员顺序可能减少填充，但会影响 ABI（二进制接口，如编译后的模块如何访问对象）。
 
+#### 图解：填充字节放在哪里
+
+沿用上面的 `Record`。假设 `int` 大小和对齐要求都是 4 字节，常见布局如下。偏移从对象起始地址算起，方框宽度不代表字节数。
+
+```mermaid
+flowchart LR
+  tag["tag_：1 字节<br/>偏移 0"] --- padding["填充：3 字节<br/>偏移 1～3"]
+  padding --- id["id_：4 字节<br/>偏移 4～7"]
+  style padding fill:#fff3cd,stroke:#b88a00,color:#333
+```
+
+从左到右地址增大，总大小是 8 字节。若把 `id_` 放前面，常见布局会变成“4 字节 id_ + 1 字节 tag_ + 3 字节尾部填充”，仍是 8 字节；这样数组中下一个对象的 `id_` 才能继续按 4 字节对齐。
+
 空类的大小也不能为 0，以便区分不同完整对象。空基类有时不额外占空间，叫空基类优化。C++20 的 `[[no_unique_address]]` 属性也允许成员与其他部分共用地址，常用于空类型成员。
 
 ### 2. 继承、虚函数与多态
 
 派生类对象里包含基类部分。多重继承时，不同基类部分可能在不同地址，转成基类指针时编译器会调整地址。虚继承让多条继承路径共享同一份虚基类部分；不要自己计算偏移来转换指针。
+
+#### 图解：继承关系与对象内部是两回事
+
+假设 `Derived` 公开继承 `BaseA` 和 `BaseB`，三者各有一个整数成员，没有虚函数。继承关系图的空心箭头指向基类：
+
+```mermaid
+classDiagram
+  BaseA <|-- Derived
+  BaseB <|-- Derived
+  class BaseA {
+    int a_
+  }
+  class BaseB {
+    int b_
+  }
+  class Derived {
+    int own_
+  }
+```
+
+实际创建一个 `Derived` 对象时，两个基类部分都在这个对象内部。下面只示意一种常见排列，省略填充，不规定具体偏移：
+
+```mermaid
+flowchart TB
+  pa["BaseA* 指针"] --> a
+  pb["BaseB* 指针"] --> b
+  subgraph object["一个 Derived 对象；从上到下地址增大"]
+    direction TB
+    a["BaseA 部分：a_"] --- b["BaseB 部分：b_"]
+    b --- own["Derived 自己的成员：own_"]
+  end
+```
+
+两个指针指向同一个完整对象里的不同部分，所以指针值可能不同。正常的派生类到基类指针转换会自动完成调整。
+
+#### 图解：菱形继承为什么会有两份基类
+
+`B`、`C` 都继承 `A`，`D` 再继承 `B`、`C`，关系看起来像菱形：
+
+```mermaid
+classDiagram
+  A <|-- B
+  A <|-- C
+  B <|-- D
+  C <|-- D
+```
+
+普通继承时，`D` 里有两份 `A`；若 B、C 都以 `virtual public A` 继承，就共享一份 `A`。这里的 `virtual` 修饰的是继承关系，与虚函数是两种用途。[标准草案说明](https://eel.is/c++draft/class.mi)
+
+```mermaid
+flowchart LR
+  subgraph normal["普通继承：一个 D 对象"]
+    direction TB
+    nb["B 部分"] --> na1["B 路径的 A"]
+    nc["C 部分"] --> na2["C 路径的 A"]
+  end
+  subgraph shared["虚继承：一个 D 对象"]
+    direction TB
+    vb["B 部分"] --> va["共享的 A"]
+    vc["C 部分"] --> va
+  end
+```
+
+这张图只表示基类部分的数量和共享关系，不表示实际地址，也不表示对象里一定存着图中的指针。若 `A` 有成员 `value_`，普通继承要区分 B 路径和 C 路径的值；虚继承时两条路径访问的是同一个值。
+
+#### 图解：虚函数如何找到实际实现
 
 **虚函数按对象实际类型选择实现。** 常见编译器用虚函数表和指向它的隐藏指针（常称 vptr）实现，但标准没有规定具体布局。通过基类指针删除派生对象时，基类应有虚析构函数。
 
@@ -614,6 +693,23 @@ int main() {
   return shape->Area() == 9 ? 0 : 1;
 }
 ```
+
+上例的继承关系是 `Square → Shape`。`shape` 管理的是完整的 `Square` 对象，调用虚函数时使用 `Square` 的实现。下面展示常见实现，只画出与 `Area()` 有关的部分：
+
+```mermaid
+flowchart LR
+  p["shape.get()<br/>取得 Shape*，不转移所有权"] --> vp
+  subgraph obj["一个 Square 对象"]
+    direction TB
+    vp["Shape 基类部分<br/>含隐藏指针 vptr"]
+    side["Square 自己的成员<br/>side_ = 3"]
+    vp --- side
+  end
+  vp -->|"查找虚函数入口"| table["对象外的虚函数表<br/>Area 入口"]
+  table --> code["Square::Area() 的代码<br/>读取当前对象的 side_，返回 9"]
+```
+
+**对象里存成员和隐藏指针，函数代码不在每个对象里各放一份。** 虚函数表通常也由同类对象共享；表中还可能有析构函数入口等信息，这里省略。
 
 多态对象用指针或引用传递。若基类可以实例化，把派生对象按值赋给基类，会丢掉派生类特有的部分，叫**对象切片**。上例的 `Shape` 是抽象类，不能这样按值创建对象。
 
