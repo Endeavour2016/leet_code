@@ -1,5 +1,10 @@
 # 算法与工程面试复习笔记
 
+> 创建日期：未知（历史文档未记录）
+> 更新日期：2026-11-01
+> 修改日期：2026-11-01
+> AI辅助模型：GPT-6（未确认具体型号）
+
 这套笔记按“解题模型”组织，而不是按题号罗列。复习目标是看到题目后能快速识别模型、说出不变量，并在 10～15 分钟内写出模板。
 
 ## 工程面试题库
@@ -23,16 +28,19 @@ flowchart LR
 
 ## 章节导航
 
-1. [数组、字符串与哈希](algo/01_array_string_hash.md)
-2. [双指针与滑动窗口](algo/02_two_pointers_window.md)
-3. [栈、队列与堆](algo/03_stack_queue_heap.md)
-4. [链表](algo/04_linked_list.md)
-5. [树、Trie 与搜索](algo/05_tree_trie_search.md)
-6. [二分查找](algo/06_binary_search.md)
-7. [动态规划与贪心](algo/07_dynamic_programming_greedy.md)
-8. [位运算、数学与杂项](algo/08_bit_math_misc.md)
-9. [仓库审查与刷题工作流](workflow/09_repository_review_and_workflow.md)
-10. [用 CMake 管理刷题代码](workflow/10_cmake_for_leetcode.md)
+算法专题已合并为[算法专题复习笔记](algo/algo_solution_overview.md)，可直接跳转到各章：
+
+1. [数组、字符串与哈希](algo/algo_solution_overview.md#1-数组字符串与哈希)
+2. [双指针与滑动窗口](algo/algo_solution_overview.md#2-双指针与滑动窗口)
+3. [栈、队列与堆](algo/algo_solution_overview.md#3-栈队列与堆)
+4. [链表](algo/algo_solution_overview.md#4-链表)
+5. [树、Trie 与搜索](algo/algo_solution_overview.md#5-树trie-与搜索)
+6. [二分查找](algo/algo_solution_overview.md#6-二分查找)
+7. [动态规划与贪心](algo/algo_solution_overview.md#7-动态规划与贪心)
+8. [位运算、数学与杂项](algo/algo_solution_overview.md#8-位运算数学与杂项)
+9. [经典排序算法：快速排序与堆排序](algo/algo_solution_overview.md#9-经典排序算法快速排序与堆排序)
+10. [仓库审查与刷题工作流](workflow/09_repository_review_and_workflow.md)
+11. [用 CMake 管理刷题代码](workflow/10_cmake_for_leetcode.md)
 
 ## 历史归档
 
