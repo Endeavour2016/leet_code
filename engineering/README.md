@@ -1,5 +1,10 @@
 # 工程面试参考实现（C++11）
 
+> 创建日期：未知（历史文档未记录）
+> 更新日期：2026-11-15
+> 修改日期：2026-11-15
+> AI辅助模型：GPT-6（未确认具体型号）
+
 从[中文题库导航](../notes/engineering/README.md)开始复习，先读题意、实现思路和正确性要求，再读代码。
 
 Bitmap 相关三题见[原理与简单实现导读](../notes/engineering/bitmap_basics.md)，对应 `eng_bitmap`、`eng_roaring_bitmap`、`eng_bloom_filter`。
