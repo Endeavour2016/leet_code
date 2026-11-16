@@ -1,7 +1,11 @@
 # C++ 多线程、异步与语言机制复习
 
-> 创建日期：2026-10-16  
-> 修改日期：2026-10-16  
+> 创建日期：2026-10-16
+>
+> 更新日期：2026-11-16
+>
+> 修改日期：2026-11-16
+>
 > AI辅助模型：GPT-6（未确认具体型号）
 
 这份笔记用于 C++ 面试复习，重点是并发、异步任务、模板和对象布局。示例以 C++11 为主，较新特性会标明版本；完整工程实现见对应题解。
@@ -9,7 +13,7 @@
 ## 阅读路线
 
 1. [并发基础与同步](#并发基础与同步先找共享数据再选工具)：线程生命周期、互斥锁、条件变量、原子操作。
-2. [异步任务与并发设计](#异步任务与并发设计把执行结果和关闭分开)：future、async、线程池、取消与有界队列。
+2. [异步任务与并发设计](#异步任务与并发设计把执行结果和关闭分开)：function、bind、packaged_task、future、async 与线程池。
 3. [模板编程](#模板编程先理解类型替换再看高级技巧)：推导、完美转发、特化和约束。
 4. [对象内存模型](#对象内存模型区分语言保证与实现细节)：布局、继承、多态和生命周期。
 
@@ -61,6 +65,36 @@ int main() {
 ```
 
 主线程必须在 `join()` 后读取 `result`；提前轮询普通变量也会产生数据竞争。`detach()` 让线程独立运行，但不会延长局部变量的生命期。
+
+#### 给线程传参数：默认保存副本，引用要明确写
+
+```cpp
+#include <functional>
+#include <thread>
+#include <utility>
+
+void AddTo(int& value, int delta) {
+  value += delta;
+}
+
+int main() {
+  int value = 10;
+  int delta = 2;
+  // thread 默认把函数和参数复制或移动到自己的存储中。
+  // std::ref(value) 包装引用，让 AddTo 修改原变量，而不是副本。
+  std::thread worker(AddTo, std::ref(value), delta);
+  delta = 100;  // 线程已经保存了 delta 的值 2，修改原变量不影响它。
+
+  // thread 不能复制；std::move 允许转移线程的管理权，不会再启动一个线程。
+  std::thread owner(std::move(worker));
+  // joinable() 表示仍关联一个需要 join/detach 的线程，不表示它还在运行。
+  const bool ownership_ok = !worker.joinable() && owner.joinable();
+  owner.join();  // value 活到这里；主线程等结束后才读，避免并发读写。
+  return ownership_ok && !owner.joinable() && value == 12 ? 0 : 1;
+}
+```
+
+`std::ref` 不延长对象生命期，也不加锁。线程函数的返回值会被 `thread` 忽略，需要结果时使用下面的 promise/future 或 packaged_task。
 
 ### 2. 互斥锁与条件变量（C++11）
 
@@ -234,12 +268,97 @@ int main() {
 
 要让两个任务有机会并发，先启动 A、B，再取结果。启动 A 后立即等待，等完才启动 B，就成了串行。
 
-### 1. `promise`、`future` 与 `packaged_task`（C++11）
+### 1. 函数对象、`std::function` 与 `std::bind`（C++11）
+
+**函数对象是能像函数一样调用的对象；`std::function` 用统一类型保存不同的可调用对象。** 普通函数、lambda、重载了 `operator()` 的类对象都能交给它。
+
+```cpp
+#include <functional>
+
+int Double(int value) {
+  return value * 2;
+}
+
+struct Add {
+  int offset_;
+
+  int operator()(int value) const {
+    // operator() 让 Add 对象支持 add(3) 这样的调用，并能携带 offset_ 状态。
+    return value + offset_;
+  }
+};
+
+int main() {
+  // int(int)：接收一个 int，返回 int；不要求底层函数或对象的类型相同。
+  std::function<int(int)> operation = Double;
+  const int doubled = operation(3);  // 调普通函数，得到 6。
+
+  Add add = {10};
+  operation = add;  // 保存 add 的副本；std::function 要求目标可复制。
+  add.offset_ = 100;
+  const int added = operation(3);  // 副本仍保存 10，得到 13。
+
+  int factor = 4;
+  operation = [factor](int value) {  // [factor]：按值捕获，保存当前值 4。
+    return value * factor;
+  };
+  const int multiplied = operation(3);  // 得到 12。
+
+  std::function<void()> empty;  // void()：无参数、无返回值；此时没有目标。
+  if (empty) {  // 调用前可检查；直接调用空 function 会报告 bad_function_call 异常。
+    empty();
+  }
+  return doubled == 6 && added == 13 && multiplied == 12 ? 0 : 1;
+}
+```
+
+局部使用 lambda 时通常写 `auto` 即可；接口或容器需要统一类型时再用 `std::function`，它可能带来内存分配和间接调用开销。
+
+**`std::bind` 把部分参数预先固定，返回一个新的可调用对象；创建时不执行原函数。**
+
+```cpp
+#include <functional>
+
+int Subtract(int left, int right) {
+  return left - right;
+}
+
+void AddTo(int& value, int delta) {
+  value += delta;
+}
+
+int main() {
+  // auto 让编译器推导 bind 返回的对象类型。
+  // _1、_2 是占位符，分别表示调用新对象时传入的第 1、第 2 个参数。
+  auto minus_ten = std::bind(Subtract, std::placeholders::_1, 10);
+  auto reversed =
+      std::bind(Subtract, std::placeholders::_2, std::placeholders::_1);
+  const int first = minus_ten(42);     // 相当于 Subtract(42, 10)，得到 32。
+  const int second = reversed(3, 10);  // 相当于 Subtract(10, 3)，得到 7。
+
+  int total = 0;
+  auto change_copy = std::bind(AddTo, total, 5);  // 默认保存普通参数的副本。
+  change_copy();  // 改的是 bind 内部的 total 副本，外面的 total 仍为 0。
+  const bool original_unchanged = total == 0;
+
+  auto change_original = std::bind(AddTo, std::ref(total), 5);
+  change_original();  // std::ref 改为引用原变量，因此 total 变为 5。
+  // 引用只读对象可用 std::cref；ref/cref 都要求原对象活到调用结束。
+
+  auto lambda = [](int value) {  // 相同功能用 lambda 通常更直观。
+    return Subtract(value, 10);
+  };
+  const bool ok = first == 32 && second == 7 && original_unchanged &&
+                  total == 5 && lambda(42) == 32;
+  return ok ? 0 : 1;
+}
+```
+
+### 2. `promise` 与 `future`：手动交付结果（C++11）
 
 - `promise<T>`：生产者写入一次结果。
 - `future<T>`：消费者等待并取出一次结果，调用 `get()` 后失效。
 - `shared_future<T>`：允许多次读取同一结果，由有效 future 的 `share()` 获得；不自动保护结果的后续修改。
-- `packaged_task`：包装函数，调用它时执行函数，并把返回值交给 future。
 
 本仓库用结果结构体表示业务成功或失败。示例不恢复内存分配、线程创建等资源失败；调用 `get()` 前必须保证 future 有效。
 
@@ -254,13 +373,16 @@ struct TaskResult {
 
 int main() {
   std::promise<TaskResult> promise;
-  std::future<TaskResult> future = promise.get_future();  // 取得接收结果的一端。
+  std::future<TaskResult> future =
+      promise.get_future();  // 取得接收结果的一端。
+  // 每个 promise 只能 get_future() 一次；future 和 promise 共享结果存储。
   std::thread worker([&promise] {
     TaskResult result = {true, 42};
     promise.set_value(result);  // 每个 promise 只写入一次。
   });
 
-  TaskResult result = future.get();  // get() 返回值，future 随后不再有效。
+  // get() 在结果未就绪时阻塞；取出结果后 future 失效，不能再 get/wait。
+  TaskResult result = future.get();
   worker.join();  // future 就绪不替代线程生命周期管理。
   return result.ok_ && result.value_ == 42 ? 0 : 1;
 }
@@ -278,7 +400,104 @@ int main() {
 
 **取到结果不等于线程已经结束**，线程可能还在清理资源，所以仍需 `join()`。promise 销毁前若没有设置结果，future 会以异常报告 broken promise（结果提供者已退出）；禁用异常时，接口必须保证正常路径都设置结果。
 
-### 2. `std::async` 的启动策略（C++11）
+#### `wait`、`wait_for` 与 `shared_future`
+
+```cpp
+#include <chrono>
+#include <future>
+
+int main() {
+  std::promise<int> promise;
+  std::future<int> future = promise.get_future();
+  // valid() 只表示有关联的共享状态，不表示结果已经准备好。
+  // 等待 0 毫秒相当于查询；这里还没设置结果，必定返回 timeout。
+  const std::future_status status =
+      future.wait_for(std::chrono::milliseconds(0));
+  const bool pending = future.valid() && status == std::future_status::timeout;
+
+  std::shared_future<int> shared = future.share();
+  // 普通 future 只能移动，不能复制；share() 后原 future 失效。
+  // shared_future 可以复制，让多个句柄读取同一份结果。
+  std::shared_future<int> another = shared;
+  promise.set_value(42);
+  shared.wait();  // 只等就绪，不取走结果；此处结果已就绪，直接返回。
+  const int& result = shared.get();  // 返回共享结果的只读引用，可多次 get。
+  // 引用使用期间保留 shared；多个线程读取时可各自持有一份 shared_future。
+  const bool ok =
+      pending && !future.valid() && result == 42 && another.get() == 42;
+  return ok ? 0 : 1;
+}
+```
+
+超时只表示“还没等到”，不会取消任务；`wait()` 不消耗结果，普通 future 的 `get()` 才会。
+
+### 3. `packaged_task`：自动把函数返回值交给 future（C++11）
+
+promise 需要手动 `set_value()`；packaged_task 在调用包装的函数后，自动保存它的返回值。下面把前面的工具串起来：
+
+```text
+bind 固定参数 → 返回 function 对象 → packaged_task 进行封装
+                                             ↓
+                                      thread 执行任务 → future.get() 取结果
+```
+
+```cpp
+#include <functional>
+#include <future>
+#include <thread>
+#include <utility>
+
+int Add(int left, int right) {
+  return left + right;
+}
+
+int main() {
+  // 固定 Add 的第一个参数为 20，调用 compute(22) 才真正计算。
+  std::function<int(int)> compute = std::bind(Add, 20, std::placeholders::_1);
+  // int(int) 描述被包装函数的签名；构造 task 不启动线程，也不执行函数。
+  std::packaged_task<int(int)> task(compute);
+  std::future<int> future = task.get_future();  // 每个共享状态只取一次 future。
+
+  // packaged_task 只能移动、不能复制；把任务交给新线程，再传入参数 22。
+  // 线程调用移入的任务，其 operator() 返回 void，计算结果 42 存入共享状态。
+  std::thread worker(std::move(task), 22);
+  const int result = future.get();  // 必要时等待；取完后 future 失效。
+  worker.join();
+  return result == 42 && !future.valid() ? 0 : 1;
+}
+```
+
+同样计算 `20 + 22`，直接用 lambda 构造 packaged_task 可以这样写：
+
+```cpp
+#include <future>
+#include <thread>
+#include <utility>
+
+int main() {
+  int base = 20;
+  // [base] 按值捕获 20，作用相当于上例 bind 固定第一个参数。
+  // lambda 接收一个 int、返回 int，与 packaged_task<int(int)> 对应。
+  std::packaged_task<int(int)> task([base](int value) {
+    return base + value;
+  });  // 此时只保存 lambda，还没有执行计算；不需要额外包装 std::function。
+  std::future<int> future = task.get_future();
+
+  // 移交任务并启动线程；线程调用 lambda，value 的值为 22。
+  std::thread worker(std::move(task), 22);
+  const int result = future.get();  // 等待并取得 42，只能 get 一次。
+  worker.join();                    // 取到结果后，仍需等待线程结束。
+  return result == 42 ? 0 : 1;
+}
+```
+
+记住三个限制：
+
+- 在移交前直接写 `task(22)` 会在当前线程执行；放进线程池时，由取出它的工作线程执行。
+- 同一共享状态只允许完成一次。`reset()` 可建立新状态供下一次调用，须重新获取对应 future，不能与执行并发。
+- `std::function` 要求目标可复制，不能直接装入只能移动的 packaged_task；线程池可用捕获 `shared_ptr`（共享所有权智能指针）的 lambda 间接持有任务，但同一任务仍只能调度一次。
+
+### 4. `std::async` 的启动策略（C++11）
 
 `std::async` 启动一个任务并返回 future。`std::launch::async` 在新线程执行；`std::launch::deferred` 等到调用 `get()` 或 `wait()` 时，由等待的线程执行。默认策略由实现选择。异步任务的 future 销毁时可能等待任务结束，所以应保存 future，避免丢弃临时对象导致串行。
 
@@ -301,7 +520,7 @@ int main() {
 
 任务不保证同时占用不同 CPU 核。`future.wait_for()` 等待结果，超时不会取消任务；对于延迟执行的任务，它会返回 `future_status::deferred`，表示任务尚待执行。
 
-### 3. 线程池与有界队列（C++11 可实现）
+### 5. 线程池与有界队列（C++11 可实现）
 
 线程池用固定数量的线程反复从队列取任务，避免为每个请求创建线程：
 
@@ -322,7 +541,7 @@ int main() {
 
 完整实现与运行方法见[线程池题解](engineering/03_thread_pool.md)和[源码](../engineering/concurrency/03_thread_pool.cpp)。
 
-### 4. 取消、超时与后续标准
+### 6. 取消、超时与后续标准
 
 | 能力 | 版本 | 复习重点 |
 |---|---|---|
@@ -347,14 +566,17 @@ std::jthread worker([](std::stop_token token) {
 
 `DoOneBoundedStep()` 由调用方实现，必须能及时返回，否则销毁 `jthread` 时也可能一直等。**超时是等不下去了，取消是请求停下来，关闭是不再接新任务**；都不代表正在运行的任务已经退出。
 
-### 5. 自检
+### 7. 自检
 
+- 为什么 `std::function` 能保存多种可调用对象，却不能直接保存 packaged_task？
+- bind/thread 默认如何保存参数？`std::ref` 能否保证对象存活或避免数据竞争？
+- 构造 packaged_task 会执行任务吗？`valid()` 为 true 是否说明结果已就绪？
 - `submit()` 成功而任务返回 `ok_ == false`，分别发生了什么？
 - `future.wait_for()` 超时后能否直接销毁它引用的数据？为什么？
 - 只有一个工作线程的池中，父任务提交子任务后马上等子任务，会怎样？
 - 为什么 `jthread` 自动 join 也不能拯救一个永远不检查停止请求的阻塞任务？
 
-延伸阅读：[WG21 线程与 future 工作草案](https://eel.is/c++draft/thread)、[WG21 P0660R10：停止令牌与 jthread](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p0660r10.pdf)。
+延伸阅读：[function](https://eel.is/c++draft/func.wrap.func)、[bind](https://eel.is/c++draft/func.bind.bind)、[packaged_task](https://eel.is/c++draft/futures.task)、[thread 构造与传参](https://eel.is/c++draft/thread.thread.constr)、[future](https://eel.is/c++draft/futures)、[停止令牌与 jthread](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p0660r10.pdf)。
 
 ---
 
